@@ -1,0 +1,208 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: ceylonica-mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ../database/mongo-init:/docker-entrypoint-initdb.d
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
+    networks:
+      - ceylonica-network
+
+  # Service Registry (Eureka Server)
+  service-registry:
+    build:
+      context: ../backend/service-registry
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.service-registry
+    container_name: ceylonica-service-registry
+    ports:
+      - "8761:8761"
+    networks:
+      - ceylonica-network
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ../backend/api-gateway
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.api-gateway
+    container_name: ceylonica-api-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-registry
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ../backend/auth-service
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.auth-service
+    container_name: ceylonica-auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - service-registry
+      - mongodb
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://admin:admin123@mongodb:27017/ceylonica_auth?authSource=admin
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # User Service
+  user-service:
+    build:
+      context: ../backend/user-service
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.user-service
+    container_name: ceylonica-user-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - service-registry
+      - mongodb
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://admin:admin123@mongodb:27017/ceylonica_users?authSource=admin
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # Product Service
+  product-service:
+    build:
+      context: ../backend/product-service
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.product-service
+    container_name: ceylonica-product-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - service-registry
+      - mongodb
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://admin:admin123@mongodb:27017/ceylonica_products?authSource=admin
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # Cart Service
+  cart-service:
+    build:
+      context: ../backend/cart-service
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.cart-service
+    container_name: ceylonica-cart-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - service-registry
+      - mongodb
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://admin:admin123@mongodb:27017/ceylonica_cart?authSource=admin
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # Order Service
+  order-service:
+    build:
+      context: ../backend/order-service
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.order-service
+    container_name: ceylonica-order-service
+    ports:
+      - "8085:8085"
+    depends_on:
+      - service-registry
+      - mongodb
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://admin:admin123@mongodb:27017/ceylonica_orders?authSource=admin
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # Payment Service
+  payment-service:
+    build:
+      context: ../backend/payment-service
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.payment-service
+    container_name: ceylonica-payment-service
+    ports:
+      - "8086:8086"
+    depends_on:
+      - service-registry
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # Delivery Service
+  delivery-service:
+    build:
+      context: ../backend/delivery-service
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.delivery-service
+    container_name: ceylonica-delivery-service
+    ports:
+      - "8087:8087"
+    depends_on:
+      - service-registry
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # Review Service
+  review-service:
+    build:
+      context: ../backend/review-service
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.review-service
+    container_name: ceylonica-review-service
+    ports:
+      - "8088:8088"
+    depends_on:
+      - service-registry
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # Notification Service
+  notification-service:
+    build:
+      context: ../backend/notification-service
+      dockerfile: ../../docker/Dockerfiles/Dockerfile.notification-service
+    container_name: ceylonica-notification-service
+    ports:
+      - "8089:8089"
+    depends_on:
+      - service-registry
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://service-registry:8761/eureka/
+    networks:
+      - ceylonica-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: ../docker/Dockerfiles/Dockerfile.frontend
+    container_name: ceylonica-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - ceylonica-network
+
+networks:
+  ceylonica-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
