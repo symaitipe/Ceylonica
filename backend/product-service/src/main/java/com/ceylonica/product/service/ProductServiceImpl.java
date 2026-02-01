@@ -1,4 +1,4 @@
 package com.ceylonica.product.service;
 
-public interface ProductService {
+public class ProductServiceImpl {
 }
