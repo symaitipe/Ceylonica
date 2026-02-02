@@ -32,11 +32,8 @@ The User Service manages user profiles and account information for the Ceylonica
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/users` | Get all users |
-| GET | `/users/{id}` | Get user by ID |
-| GET | `/users/email/{email}` | Get user by email |
-| PUT | `/users/{id}` | Update user profile |
-| DELETE | `/users/{id}` | Delete user |
+| GET | `/api/users/{email}` | Get user profile details |
+| POST | `/api/users/profile` | Update user profile |
 
 ## Data Model
 
