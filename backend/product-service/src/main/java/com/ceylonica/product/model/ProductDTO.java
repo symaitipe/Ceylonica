@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class ProductDTO {
 
@@ -15,12 +14,14 @@ public class ProductDTO {
     private BigDecimal productPrice;
     private Integer categoryId;
     private List<MultipartFile> productImages;
-    private Map<String, Objects> additionalInformation;
+    private List<String> imageUrls;
+    private Map<String, Object> additionalInformation;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-
-    public ProductDTO(String productName, String productDescription, BigDecimal productPrice, Integer categoryId, List<MultipartFile> productImages, Map<String, Objects> additionalInformation, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ProductDTO(String productName, String productDescription, BigDecimal productPrice, Integer categoryId,
+            List<MultipartFile> productImages, Map<String, Object> additionalInformation, LocalDateTime createdAt,
+            LocalDateTime updatedAt) {
         this.productName = productName;
         this.productDescription = productDescription;
         this.productPrice = productPrice;
@@ -31,7 +32,8 @@ public class ProductDTO {
         this.updatedAt = updatedAt;
     }
 
-    public ProductDTO(){};
+    public ProductDTO() {
+    };
 
     public String getProductName() {
         return productName;
@@ -73,11 +75,19 @@ public class ProductDTO {
         this.productImages = productImages;
     }
 
-    public Map<String, Objects> getAdditionalInformation() {
+    public List<String> getImageUrls() {
+        return imageUrls;
+    }
+
+    public void setImageUrls(List<String> imageUrls) {
+        this.imageUrls = imageUrls;
+    }
+
+    public Map<String, Object> getAdditionalInformation() {
         return additionalInformation;
     }
 
-    public void setAdditionalInformation(Map<String, Objects> additionalInformation) {
+    public void setAdditionalInformation(Map<String, Object> additionalInformation) {
         this.additionalInformation = additionalInformation;
     }
 
