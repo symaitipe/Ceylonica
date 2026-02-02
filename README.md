@@ -25,10 +25,24 @@ A microservices-based e-commerce platform built with Spring Boot and React.
 
 ### Prerequisites
 
-- Java 17+
-- Node.js 18+
+- Java 25+
+- Maven 3.9.12
+- Node.js 22+
 - MongoDB
 - Docker (optional)
+
+### To Check
+
+- Java version: `java --version`
+- Node.js version: `node --version`
+- Maven version: `mvn --version`
+
+### Development Guidelines
+
+Please refer to the [Instructions](docs/Instructions.md) before starting development. Detailed documentation is available below:
+- [API Documentation](docs/API-Documentation.md)
+- [Architecture Diagram](docs/Architecture-Diagram.md)
+- [Software Requirements Specification (SRS)](docs/SRS.md)
 
 ### Running the Application
 
