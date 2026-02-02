@@ -32,7 +32,7 @@ public class Product {
 
     public Product(){};
 
-    
+
     public Product(Integer productId, String productName, String productDescription, BigDecimal productPrice, Integer categoryId, List<String> productImagesURL, Map<String, Object> additionalInformation, Instant createdAt, Instant updatedAt) {
         this.productId = productId;
         this.productName = productName;
