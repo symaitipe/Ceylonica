@@ -30,4 +30,90 @@ public class Product {
     private Instant updatedAt;
 
 
+    public Product(){};
+
+    
+    public Product(Integer productId, String productName, String productDescription, BigDecimal productPrice, Integer categoryId, List<String> productImagesURL, Map<String, Object> additionalInformation, Instant createdAt, Instant updatedAt) {
+        this.productId = productId;
+        this.productName = productName;
+        this.productDescription = productDescription;
+        this.productPrice = productPrice;
+        this.categoryId = categoryId;
+        this.productImagesURL = productImagesURL;
+        this.additionalInformation = additionalInformation;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getProductDescription() {
+        return productDescription;
+    }
+
+    public void setProductDescription(String productDescription) {
+        this.productDescription = productDescription;
+    }
+
+    public BigDecimal getProductPrice() {
+        return productPrice;
+    }
+
+    public void setProductPrice(BigDecimal productPrice) {
+        this.productPrice = productPrice;
+    }
+
+    public Integer getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(Integer categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public List<String> getProductImagesURL() {
+        return productImagesURL;
+    }
+
+    public void setProductImagesURL(List<String> productImagesURL) {
+        this.productImagesURL = productImagesURL;
+    }
+
+    public Map<String, Object> getAdditionalInformation() {
+        return additionalInformation;
+    }
+
+    public void setAdditionalInformation(Map<String, Object> additionalInformation) {
+        this.additionalInformation = additionalInformation;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Instant getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Instant updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }
