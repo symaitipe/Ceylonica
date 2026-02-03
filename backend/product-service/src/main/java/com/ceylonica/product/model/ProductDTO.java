@@ -9,6 +9,7 @@ import java.util.Map;
 
 public class ProductDTO {
 
+    private Integer productId;
     private String productName;
     private String productDescription;
     private BigDecimal productPrice;
@@ -34,6 +35,14 @@ public class ProductDTO {
 
     public ProductDTO() {
     };
+
+    public Integer getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Integer productId) {
+        this.productId = productId;
+    }
 
     public String getProductName() {
         return productName;

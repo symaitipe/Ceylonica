@@ -5,6 +5,7 @@ import com.ceylonica.product.model.ProductDTO;
 import com.mongodb.lang.NonNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public interface ProductService {
     @NonNull
@@ -16,4 +17,6 @@ public interface ProductService {
     ProductDTO addProduct(ProductDTO productDTO);
 
     ProductDTO getByProductId(Integer productId);
+
+    ArrayList<ProductDTO> getAllProducts();
 }

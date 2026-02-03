@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
@@ -22,19 +23,23 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     ProductRepository productRepository;
 
+    // Create a product...............
+
     public ProductDTO addProduct(ProductDTO productDTO) {
 
         try {
             Product product = convertProductDTOtoProduct(productDTO);
 
-            productRepository.save(product);
+            Product savedProduct = productRepository.save(product);
 
-            return productDTO;
+            return convertProducttoProductDTO(savedProduct);
         } catch (IOException e) {
             throw new RuntimeException("Failed to Add Product");
         }
 
     }
+
+    // Find product by specific Id...............
 
     public ProductDTO getByProductId(Integer productId) {
         return productRepository.findById(productId)
@@ -42,11 +47,72 @@ public class ProductServiceImpl implements ProductService {
                 .orElse(null);
     }
 
+    // Find all products...............
+
+    public ArrayList<ProductDTO> getAllProducts() {
+        ArrayList<Product> ProductList = productRepository.findAll();
+        ArrayList<ProductDTO> ProductDTOList = new ArrayList<>();
+
+        for (Product product : ProductList) {
+
+            ProductDTO productDTO = convertProducttoProductDTO(product);
+            ProductDTOList.add(productDTO);
+
+        }
+        return ProductDTOList;
+    }
+
+    // Update Product.............
+
+    public ProductDTO updateProduct(ProductDTO productDTO) {
+        if (productDTO.getProductId() == null) {
+            throw new RuntimeException("Product ID is required for update.");
+        }
+
+        Optional<Product> productOptional = productRepository.findById(productDTO.getProductId());
+
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+
+            product.setProductName(productDTO.getProductName());
+            product.setProductPrice(productDTO.getProductPrice());
+            product.setProductDescription(productDTO.getProductDescription());
+            product.setCategoryId(productDTO.getCategoryId());
+            product.setAdditionalInformation(productDTO.getAdditionalInformation());
+
+            // Handle new images if provided
+            if (productDTO.getProductImages() != null && !productDTO.getProductImages().isEmpty()) {
+                List<String> currentImages = product.getProductImagesURL();
+                if (currentImages == null) {
+                    currentImages = new ArrayList<>();
+                }
+
+                try {
+                    for (MultipartFile file : productDTO.getProductImages()) {
+                        if (!file.isEmpty()) {
+                            String fileName = saveImage(file);
+                            currentImages.add(fileName);
+                        }
+                    }
+                    product.setProductImagesURL(currentImages);
+                } catch (IOException e) {
+                    throw new RuntimeException("Failed to update product images", e);
+                }
+            }
+
+            productRepository.save(product);
+            return convertProducttoProductDTO(product);
+        } else {
+            throw new RuntimeException("Product not found with ID: " + productDTO.getProductId());
+        }
+    }
+
     // convert product to productDTO's for get from database........
 
     public ProductDTO convertProducttoProductDTO(Product product) {
         ProductDTO productDTO = new ProductDTO();
 
+        productDTO.setProductId(product.getProductId());
         productDTO.setProductName(product.getProductName());
         productDTO.setProductPrice(product.getProductPrice());
         productDTO.setProductDescription(product.getProductDescription());
