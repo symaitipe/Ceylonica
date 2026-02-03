@@ -9,12 +9,12 @@ import java.util.Map;
 
 public class ProductDTO {
 
-    private Integer productId;
+    private String productId;
     private String productName;
     private String productDescription;
     private BigDecimal productPrice;
     private Integer categoryId;
-    private List<MultipartFile> cardImages; // Limit to 2 in frontend/logic
+    private List<MultipartFile> cardImages;
     private List<MultipartFile> detailImages;
     private List<String> cardImageUrls;
     private List<String> detailImageUrls;
@@ -40,11 +40,11 @@ public class ProductDTO {
     public ProductDTO() {
     };
 
-    public Integer getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 

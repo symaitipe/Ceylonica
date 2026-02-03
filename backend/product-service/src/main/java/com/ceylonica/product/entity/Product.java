@@ -15,7 +15,7 @@ import java.util.Map;
 public class Product {
 
     @Id
-    private Integer productId;
+    private String productId;
     private String productName;
     private String productDescription;
     private BigDecimal productPrice;
@@ -33,7 +33,7 @@ public class Product {
     public Product() {
     };
 
-    public Product(Integer productId, String productName, String productDescription, BigDecimal productPrice,
+    public Product(String productId, String productName, String productDescription, BigDecimal productPrice,
             Integer categoryId, List<String> cardImageURLs, List<String> detailImageURLs,
             Map<String, Object> additionalInformation, Instant createdAt, Instant updatedAt) {
         this.productId = productId;
@@ -48,11 +48,11 @@ public class Product {
         this.updatedAt = updatedAt;
     }
 
-    public Integer getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 

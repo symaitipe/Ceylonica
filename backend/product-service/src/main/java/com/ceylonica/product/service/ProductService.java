@@ -16,11 +16,11 @@ public interface ProductService {
 
     ProductDTO addProduct(ProductDTO productDTO);
 
-    ProductDTO getByProductId(Integer productId);
+    ProductDTO getByProductId(String productId);
 
     ArrayList<ProductDTO> getAllProducts();
 
     ProductDTO updateProduct(ProductDTO productDTO);
 
-    String deleteProduct(Integer productId);
+    String deleteProduct(String productId);
 }

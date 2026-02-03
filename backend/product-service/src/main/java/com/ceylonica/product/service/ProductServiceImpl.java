@@ -25,27 +25,32 @@ public class ProductServiceImpl implements ProductService {
 
     // Define image stored file path....
 
-    private final String IMAGE_UPLOAD_DIRECTORY = "resources/static/images/";
+    private final String IMAGE_UPLOAD_DIRECTORY = "product-images/";
 
     // Create a product...............
 
     public ProductDTO addProduct(ProductDTO productDTO) {
 
         try {
+            System.out.println("Received request to add product: " + productDTO.getProductName());
+
             Product product = convertProductDTOtoProduct(productDTO);
+            System.out.println("Converted to Entity. Ready to save.");
 
             Product savedProduct = productRepository.save(product);
+            System.out.println("Product saved to DB. ID: " + savedProduct.getProductId());
 
             return convertProducttoProductDTO(savedProduct);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to Add Product");
+        } catch (Exception e) {
+            e.printStackTrace(); // This prints the error to your console
+            throw new RuntimeException("Failed to Add Product: " + e.getMessage());
         }
 
     }
 
     // Find product by specific Id...............
 
-    public ProductDTO getByProductId(Integer productId) {
+    public ProductDTO getByProductId(String productId) {
         return productRepository.findById(productId)
                 .map(this::convertProducttoProductDTO)
                 .orElse(null);
@@ -85,23 +90,34 @@ public class ProductServiceImpl implements ProductService {
             product.setAdditionalInformation(productDTO.getAdditionalInformation());
 
             // Handle updates for card images
-            if (productDTO.getCardImages() != null && !productDTO.getCardImages().isEmpty()) {
-                List<String> currentCardImages = product.getCardImageURLs();
-                if (currentCardImages == null) {
-                    currentCardImages = new ArrayList<>();
+            boolean newCardFilesProvided = productDTO.getCardImages() != null && !productDTO.getCardImages().isEmpty();
+            boolean cardUrlsProvided = productDTO.getCardImageUrls() != null;
+
+            if (newCardFilesProvided || cardUrlsProvided) {
+                List<String> newCardImages = new ArrayList<>();
+                if (cardUrlsProvided) {
+                    newCardImages.addAll(productDTO.getCardImageUrls());
                 }
-                processImages(productDTO.getCardImages(), currentCardImages);
-                product.setCardImageURLs(currentCardImages);
+                if (newCardFilesProvided) {
+                    processImages(productDTO.getCardImages(), newCardImages);
+                }
+                product.setCardImageURLs(newCardImages);
             }
 
             // Handle updates for detail images
-            if (productDTO.getDetailImages() != null && !productDTO.getDetailImages().isEmpty()) {
-                List<String> currentDetailImages = product.getDetailImageURLs();
-                if (currentDetailImages == null) {
-                    currentDetailImages = new ArrayList<>();
+            boolean newDetailFilesProvided = productDTO.getDetailImages() != null
+                    && !productDTO.getDetailImages().isEmpty();
+            boolean detailUrlsProvided = productDTO.getDetailImageUrls() != null;
+
+            if (newDetailFilesProvided || detailUrlsProvided) {
+                List<String> newDetailImages = new ArrayList<>();
+                if (detailUrlsProvided) {
+                    newDetailImages.addAll(productDTO.getDetailImageUrls());
                 }
-                processImages(productDTO.getDetailImages(), currentDetailImages);
-                product.setDetailImageURLs(currentDetailImages);
+                if (newDetailFilesProvided) {
+                    processImages(productDTO.getDetailImages(), newDetailImages);
+                }
+                product.setDetailImageURLs(newDetailImages);
             }
 
             productRepository.save(product);
@@ -113,7 +129,7 @@ public class ProductServiceImpl implements ProductService {
 
     // delete product...........
 
-    public String deleteProduct(Integer productId) {
+    public String deleteProduct(String productId) {
         Optional<Product> productOptional = productRepository.findById(productId);
 
         if (productOptional.isPresent()) {
@@ -153,15 +169,24 @@ public class ProductServiceImpl implements ProductService {
         product.setCategoryId(productDTO.getCategoryId());
         product.setAdditionalInformation(productDTO.getAdditionalInformation());
 
+        // Log card images reception
+        if (productDTO.getCardImages() != null) {
+            System.out.println("Processing " + productDTO.getCardImages().size() + " card images.");
+        } else {
+            System.out.println("No card images received (null).");
+        }
+
         List<String> cardImageUrls = new ArrayList<>();
         if (productDTO.getCardImages() != null) {
             for (MultipartFile file : productDTO.getCardImages()) {
                 if (!file.isEmpty()) {
                     String fileName = saveImage(file);
-                    cardImageUrls.add(fileName);
+                    // Store full URL so frontend can use it directly
+                    cardImageUrls.add("http://localhost:8083/product-images/" + fileName);
                 }
             }
         }
+        System.out.println("Setting Card Image URLs: " + cardImageUrls);
         product.setCardImageURLs(cardImageUrls);
 
         List<String> detailImageUrls = new ArrayList<>();
@@ -169,7 +194,7 @@ public class ProductServiceImpl implements ProductService {
             for (MultipartFile file : productDTO.getDetailImages()) {
                 if (!file.isEmpty()) {
                     String fileName = saveImage(file);
-                    detailImageUrls.add(fileName);
+                    detailImageUrls.add("http://localhost:8083/product-images/" + fileName);
                 }
             }
         }
@@ -184,7 +209,7 @@ public class ProductServiceImpl implements ProductService {
             for (MultipartFile file : newFiles) {
                 if (!file.isEmpty()) {
                     String fileName = saveImage(file);
-                    currentUrls.add(fileName);
+                    currentUrls.add("http://localhost:8083/product-images/" + fileName);
                 }
             }
         } catch (IOException e) {
