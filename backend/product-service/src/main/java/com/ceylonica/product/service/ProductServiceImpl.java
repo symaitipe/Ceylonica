@@ -2,6 +2,8 @@ package com.ceylonica.product.service;
 
 import com.ceylonica.product.entity.Product;
 import com.ceylonica.product.model.ProductDTO;
+import com.ceylonica.product.repository.ProductRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -17,8 +19,28 @@ import org.springframework.stereotype.Service;
 @Service
 public class ProductServiceImpl implements ProductService {
 
+    @Autowired
+    ProductRepository productRepository;
 
+    public ProductDTO addProduct(ProductDTO productDTO) {
 
+        try {
+            Product product = convertProductDTOtoProduct(productDTO);
+
+            productRepository.save(product);
+
+            return productDTO;
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to Add Product");
+        }
+
+    }
+
+    public ProductDTO getByProductId(Integer productId) {
+        return productRepository.findById(productId)
+                .map(this::convertProducttoProductDTO)
+                .orElse(null);
+    }
 
     // convert product to productDTO's for get from database........
 
