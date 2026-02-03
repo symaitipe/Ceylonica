@@ -23,6 +23,10 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     ProductRepository productRepository;
 
+    // Define image stored file path....
+
+    private final String IMAGE_UPLOAD_DIRECTORY = "resources/static/images/";
+
     // Create a product...............
 
     public ProductDTO addProduct(ProductDTO productDTO) {
@@ -50,7 +54,7 @@ public class ProductServiceImpl implements ProductService {
     // Find all products...............
 
     public ArrayList<ProductDTO> getAllProducts() {
-        ArrayList<Product> ProductList = productRepository.findAll();
+        List<Product> ProductList = productRepository.findAll();
         ArrayList<ProductDTO> ProductDTOList = new ArrayList<>();
 
         for (Product product : ProductList) {
@@ -80,24 +84,24 @@ public class ProductServiceImpl implements ProductService {
             product.setCategoryId(productDTO.getCategoryId());
             product.setAdditionalInformation(productDTO.getAdditionalInformation());
 
-            // Handle new images if provided
-            if (productDTO.getProductImages() != null && !productDTO.getProductImages().isEmpty()) {
-                List<String> currentImages = product.getProductImagesURL();
-                if (currentImages == null) {
-                    currentImages = new ArrayList<>();
+            // Handle updates for card images
+            if (productDTO.getCardImages() != null && !productDTO.getCardImages().isEmpty()) {
+                List<String> currentCardImages = product.getCardImageURLs();
+                if (currentCardImages == null) {
+                    currentCardImages = new ArrayList<>();
                 }
+                processImages(productDTO.getCardImages(), currentCardImages);
+                product.setCardImageURLs(currentCardImages);
+            }
 
-                try {
-                    for (MultipartFile file : productDTO.getProductImages()) {
-                        if (!file.isEmpty()) {
-                            String fileName = saveImage(file);
-                            currentImages.add(fileName);
-                        }
-                    }
-                    product.setProductImagesURL(currentImages);
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to update product images", e);
+            // Handle updates for detail images
+            if (productDTO.getDetailImages() != null && !productDTO.getDetailImages().isEmpty()) {
+                List<String> currentDetailImages = product.getDetailImageURLs();
+                if (currentDetailImages == null) {
+                    currentDetailImages = new ArrayList<>();
                 }
+                processImages(productDTO.getDetailImages(), currentDetailImages);
+                product.setDetailImageURLs(currentDetailImages);
             }
 
             productRepository.save(product);
@@ -105,6 +109,20 @@ public class ProductServiceImpl implements ProductService {
         } else {
             throw new RuntimeException("Product not found with ID: " + productDTO.getProductId());
         }
+    }
+
+    // delete product...........
+
+    public String deleteProduct(Integer productId) {
+        Optional<Product> productOptional = productRepository.findById(productId);
+
+        if (productOptional.isPresent()) {
+            Product product = productOptional.get();
+            String productName = product.getProductName();
+            productRepository.deleteById(productId);
+            return productName + " Deleted Successfully";
+        }
+        return "Product Not Found";
     }
 
     // convert product to productDTO's for get from database........
@@ -117,15 +135,12 @@ public class ProductServiceImpl implements ProductService {
         productDTO.setProductPrice(product.getProductPrice());
         productDTO.setProductDescription(product.getProductDescription());
         productDTO.setCategoryId(product.getCategoryId());
-        productDTO.setImageUrls(product.getProductImagesURL());
+        productDTO.setCardImageUrls(product.getCardImageURLs());
+        productDTO.setDetailImageUrls(product.getDetailImageURLs());
         productDTO.setAdditionalInformation(product.getAdditionalInformation());
 
         return productDTO;
     }
-
-    // Define image stored file path....
-
-    private final String IMAGE_UPLOAD_DIRECTORY = "resources/static/images/";
 
     // convert productDTO's to product for store in database........
 
@@ -138,21 +153,43 @@ public class ProductServiceImpl implements ProductService {
         product.setCategoryId(productDTO.getCategoryId());
         product.setAdditionalInformation(productDTO.getAdditionalInformation());
 
-        List<String> imageUrls = new ArrayList<>();
-
-        if (productDTO.getProductImages() != null) {
-            for (MultipartFile file : productDTO.getProductImages()) {
+        List<String> cardImageUrls = new ArrayList<>();
+        if (productDTO.getCardImages() != null) {
+            for (MultipartFile file : productDTO.getCardImages()) {
                 if (!file.isEmpty()) {
                     String fileName = saveImage(file);
-                    imageUrls.add(fileName);
+                    cardImageUrls.add(fileName);
                 }
             }
         }
+        product.setCardImageURLs(cardImageUrls);
 
-        product.setProductImagesURL(imageUrls);
+        List<String> detailImageUrls = new ArrayList<>();
+        if (productDTO.getDetailImages() != null) {
+            for (MultipartFile file : productDTO.getDetailImages()) {
+                if (!file.isEmpty()) {
+                    String fileName = saveImage(file);
+                    detailImageUrls.add(fileName);
+                }
+            }
+        }
+        product.setDetailImageURLs(detailImageUrls);
 
         return product;
 
+    }
+
+    private void processImages(List<MultipartFile> newFiles, List<String> currentUrls) {
+        try {
+            for (MultipartFile file : newFiles) {
+                if (!file.isEmpty()) {
+                    String fileName = saveImage(file);
+                    currentUrls.add(fileName);
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to update product images", e);
+        }
     }
 
     private String saveImage(MultipartFile file) throws IOException {

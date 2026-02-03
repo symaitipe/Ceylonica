@@ -14,20 +14,24 @@ public class ProductDTO {
     private String productDescription;
     private BigDecimal productPrice;
     private Integer categoryId;
-    private List<MultipartFile> productImages;
-    private List<String> imageUrls;
+    private List<MultipartFile> cardImages; // Limit to 2 in frontend/logic
+    private List<MultipartFile> detailImages;
+    private List<String> cardImageUrls;
+    private List<String> detailImageUrls;
     private Map<String, Object> additionalInformation;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     public ProductDTO(String productName, String productDescription, BigDecimal productPrice, Integer categoryId,
-            List<MultipartFile> productImages, Map<String, Object> additionalInformation, LocalDateTime createdAt,
+            List<MultipartFile> cardImages, List<MultipartFile> detailImages, Map<String, Object> additionalInformation,
+            LocalDateTime createdAt,
             LocalDateTime updatedAt) {
         this.productName = productName;
         this.productDescription = productDescription;
         this.productPrice = productPrice;
         this.categoryId = categoryId;
-        this.productImages = productImages;
+        this.cardImages = cardImages;
+        this.detailImages = detailImages;
         this.additionalInformation = additionalInformation;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -76,20 +80,36 @@ public class ProductDTO {
         this.categoryId = categoryId;
     }
 
-    public List<MultipartFile> getProductImages() {
-        return productImages;
+    public List<MultipartFile> getCardImages() {
+        return cardImages;
     }
 
-    public void setProductImages(List<MultipartFile> productImages) {
-        this.productImages = productImages;
+    public void setCardImages(List<MultipartFile> cardImages) {
+        this.cardImages = cardImages;
     }
 
-    public List<String> getImageUrls() {
-        return imageUrls;
+    public List<MultipartFile> getDetailImages() {
+        return detailImages;
     }
 
-    public void setImageUrls(List<String> imageUrls) {
-        this.imageUrls = imageUrls;
+    public void setDetailImages(List<MultipartFile> detailImages) {
+        this.detailImages = detailImages;
+    }
+
+    public List<String> getCardImageUrls() {
+        return cardImageUrls;
+    }
+
+    public void setCardImageUrls(List<String> cardImageUrls) {
+        this.cardImageUrls = cardImageUrls;
+    }
+
+    public List<String> getDetailImageUrls() {
+        return detailImageUrls;
+    }
+
+    public void setDetailImageUrls(List<String> detailImageUrls) {
+        this.detailImageUrls = detailImageUrls;
     }
 
     public Map<String, Object> getAdditionalInformation() {

@@ -20,7 +20,8 @@ public class Product {
     private String productDescription;
     private BigDecimal productPrice;
     private Integer categoryId;
-    private List<String> productImagesURL;
+    private List<String> cardImageURLs;
+    private List<String> detailImageURLs;
     private Map<String, Object> additionalInformation;
 
     @CreatedDate
@@ -29,17 +30,19 @@ public class Product {
     @LastModifiedDate
     private Instant updatedAt;
 
+    public Product() {
+    };
 
-    public Product(){};
-
-
-    public Product(Integer productId, String productName, String productDescription, BigDecimal productPrice, Integer categoryId, List<String> productImagesURL, Map<String, Object> additionalInformation, Instant createdAt, Instant updatedAt) {
+    public Product(Integer productId, String productName, String productDescription, BigDecimal productPrice,
+            Integer categoryId, List<String> cardImageURLs, List<String> detailImageURLs,
+            Map<String, Object> additionalInformation, Instant createdAt, Instant updatedAt) {
         this.productId = productId;
         this.productName = productName;
         this.productDescription = productDescription;
         this.productPrice = productPrice;
         this.categoryId = categoryId;
-        this.productImagesURL = productImagesURL;
+        this.cardImageURLs = cardImageURLs;
+        this.detailImageURLs = detailImageURLs;
         this.additionalInformation = additionalInformation;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -85,12 +88,20 @@ public class Product {
         this.categoryId = categoryId;
     }
 
-    public List<String> getProductImagesURL() {
-        return productImagesURL;
+    public List<String> getCardImageURLs() {
+        return cardImageURLs;
     }
 
-    public void setProductImagesURL(List<String> productImagesURL) {
-        this.productImagesURL = productImagesURL;
+    public void setCardImageURLs(List<String> cardImageURLs) {
+        this.cardImageURLs = cardImageURLs;
+    }
+
+    public List<String> getDetailImageURLs() {
+        return detailImageURLs;
+    }
+
+    public void setDetailImageURLs(List<String> detailImageURLs) {
+        this.detailImageURLs = detailImageURLs;
     }
 
     public Map<String, Object> getAdditionalInformation() {
