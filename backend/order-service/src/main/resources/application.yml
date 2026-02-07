@@ -4,9 +4,9 @@ server:
 spring:
   application:
     name: order-service
-  data:
-    mongodb:
-      uri: mongodb://localhost:27017/ceylonica_orders
+
+  mongodb:
+    uri: mongodb://localhost:27017/ceylonica_orders
 
 eureka:
   client:
