@@ -42,7 +42,7 @@ public class ProductServiceImpl implements ProductService {
 
             return convertProducttoProductDTO(savedProduct);
         } catch (Exception e) {
-            e.printStackTrace(); // This prints the error to your console
+            e.printStackTrace();
             throw new RuntimeException("Failed to Add Product: " + e.getMessage());
         }
 

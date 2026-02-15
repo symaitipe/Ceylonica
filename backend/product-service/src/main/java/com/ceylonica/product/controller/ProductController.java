@@ -15,12 +15,8 @@ public class ProductController {
     ProductServiceImpl productService;
 
     @PostMapping(value = "/api/addproduct")
-    public ResponseEntity<?> addProduct(@ModelAttribute ProductDTO productDTO) {
-        try {
-            return ResponseEntity.ok(productService.addProduct(productDTO));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error adding product: " + e.getMessage());
-        }
+    public ProductDTO addProduct(@ModelAttribute ProductDTO productDTO) {
+        return productService.addProduct(productDTO);
     }
 
     @GetMapping(value = "/api/product/{productId}")
@@ -34,12 +30,8 @@ public class ProductController {
     }
 
     @PutMapping(value = "/api/updateproduct")
-    public ResponseEntity<?> updateProduct(@ModelAttribute ProductDTO productDTO) {
-        try {
-            return ResponseEntity.ok(productService.updateProduct(productDTO));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error updating product: " + e.getMessage());
-        }
+    public ProductDTO updateProduct(@ModelAttribute ProductDTO productDTO) {
+        return productService.updateProduct(productDTO);
     }
 
     @DeleteMapping(value = "/api/product/{productId}")
