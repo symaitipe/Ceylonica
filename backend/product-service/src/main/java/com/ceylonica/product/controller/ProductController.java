@@ -1,58 +1,46 @@
 package com.ceylonica.product.controller;
 
-import com.ceylonica.product.model.Product;
-import com.ceylonica.product.service.ProductService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import com.ceylonica.product.model.ProductDTO;
+import com.ceylonica.product.service.ProductServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.ArrayList;
 
 @RestController
-@RequestMapping("/products")
-@RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class ProductController {
-    
-    private final ProductService productService;
-    
-    @GetMapping
-    public List<Product> getAllProducts() {
+
+    @Autowired
+    ProductServiceImpl productService;
+
+    @PostMapping(value = "/api/addproduct")
+    public ProductDTO addProduct(@ModelAttribute ProductDTO productDTO) {
+        return productService.addProduct(productDTO);
+    }
+
+    @GetMapping(value = "/api/product/{productId}")
+    public ProductDTO getProduct(@PathVariable String productId) {
+        return productService.getByProductId(productId);
+    }
+
+    @GetMapping(value = "/api/productlist")
+    public ArrayList<ProductDTO> getProductList() {
         return productService.getAllProducts();
     }
-    
-    @GetMapping("/{id}")
-    public ResponseEntity<Product> getProductById(@PathVariable String id) {
-        return productService.getProductById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+
+    @GetMapping(value = "/api/productsearch")
+    public ArrayList<ProductDTO> searchProduct(@RequestParam String keyword) {
+        return productService.searchProducts(keyword);
     }
-    
-    @GetMapping("/category/{category}")
-    public List<Product> getProductsByCategory(@PathVariable String category) {
-        return productService.getProductsByCategory(category);
+
+    @PutMapping(value = "/api/updateproduct")
+    public ProductDTO updateProduct(@ModelAttribute ProductDTO productDTO) {
+        return productService.updateProduct(productDTO);
     }
-    
-    @GetMapping("/search")
-    public List<Product> searchProducts(@RequestParam String q) {
-        return productService.searchProducts(q);
-    }
-    
-    @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(productService.createProduct(product));
-    }
-    
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable String id, @RequestBody Product product) {
-        return ResponseEntity.ok(productService.updateProduct(id, product));
-    }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable String id) {
-        productService.deleteProduct(id);
-        return ResponseEntity.noContent().build();
+
+    @DeleteMapping(value = "/api/product/{productId}")
+    public String deleteProduct(@PathVariable String productId) {
+        return productService.deleteProduct(productId);
     }
 }

@@ -38,13 +38,12 @@ The Product Service manages the product catalog for the Ceylonica e-commerce pla
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/products` | Get all products |
-| GET | `/products/{id}` | Get product by ID |
-| GET | `/products/category/{category}` | Get products by category |
+| GET | `/api/productlist` | Get all products |
+| GET | `/api/product/{productId}` | Get product by ID |
 | GET | `/products/search?q={query}` | Search products |
-| POST | `/products` | Create new product (Admin) |
-| PUT | `/products/{id}` | Update product (Admin) |
-| DELETE | `/products/{id}` | Delete product (Admin) |
+| POST | `/api/addproduct` | Create new product (Admin) |
+| PUT | `/api/updateproduct` | Update product (Admin) |
+| DELETE | `/api/product/{productId}` | Delete product (Admin) |
 
 ## Data Model
 
