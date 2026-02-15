@@ -71,6 +71,19 @@ public class ProductServiceImpl implements ProductService {
         return ProductDTOList;
     }
 
+    // Search products by keyword...............
+
+    public ArrayList<ProductDTO> searchProducts(String keyword) {
+        List<Product> productList = productRepository.findByProductNameContainingIgnoreCase(keyword);
+        ArrayList<ProductDTO> productDTOList = new ArrayList<>();
+
+        for (Product product : productList) {
+            ProductDTO productDTO = convertProducttoProductDTO(product);
+            productDTOList.add(productDTO);
+        }
+        return productDTOList;
+    }
+
     // Update Product.............
 
     public ProductDTO updateProduct(ProductDTO productDTO) {

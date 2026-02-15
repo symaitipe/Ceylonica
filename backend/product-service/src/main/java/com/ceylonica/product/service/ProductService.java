@@ -22,5 +22,7 @@ public interface ProductService {
 
     ProductDTO updateProduct(ProductDTO productDTO);
 
+    ArrayList<ProductDTO> searchProducts(String keyword);
+
     String deleteProduct(String productId);
 }

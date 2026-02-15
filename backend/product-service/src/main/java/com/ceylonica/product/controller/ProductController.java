@@ -29,6 +29,11 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
+    @GetMapping(value = "/api/productsearch")
+    public ArrayList<ProductDTO> searchProduct(@RequestParam String keyword) {
+        return productService.searchProducts(keyword);
+    }
+
     @PutMapping(value = "/api/updateproduct")
     public ProductDTO updateProduct(@ModelAttribute ProductDTO productDTO) {
         return productService.updateProduct(productDTO);
