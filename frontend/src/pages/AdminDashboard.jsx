@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllProducts, createProduct, deleteProduct, updateProduct } from '../api/productApi';
 import { getOrders, updateOrderStatus } from '../api/orderApi';
@@ -21,8 +21,14 @@ const AdminDashboard = () => {
     price: '',
     stock: '',
     category: '',
-    imageUrl: ''
+    imageUrl: '',
+    cardImage: null,
+    detailImages: [],
+    detailImageUrls: []
   });
+
+  const cardImageInputRef = useRef(null);
+  const detailImagesInputRef = useRef([]);
 
   useEffect(() => {
     if (activeTab === 'products') {
@@ -64,7 +70,10 @@ const AdminDashboard = () => {
       price: product.price || '',
       stock: product.stock || '',
       category: product.category || '',
-      imageUrl: product.imageUrl || ''
+      imageUrl: product.imageUrl || '',
+      cardImage: null,
+      detailImages: [],
+      detailImageUrls: product.detailImageUrls || []
     });
     setShowAddProduct(true);
   };
@@ -72,7 +81,7 @@ const AdminDashboard = () => {
   const handleCancelForm = () => {
     setShowAddProduct(false);
     setEditingProductId(null);
-    setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '' });
+    setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '', cardImage: null, detailImages: [], detailImageUrls: [] });
   };
 
   const handleAddProduct = async (e) => {
@@ -85,7 +94,7 @@ const AdminDashboard = () => {
       }
       setShowAddProduct(false);
       setEditingProductId(null);
-      setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '' });
+      setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '', cardImage: null, detailImages: [], detailImageUrls: [] });
       fetchProducts();
     } catch (err) {
       console.error('Failed to save product', err);
@@ -148,7 +157,7 @@ const AdminDashboard = () => {
                     <h2>Products</h2>
                     <button className="add-btn-primary" onClick={() => {
                       setEditingProductId(null);
-                      setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '' });
+                      setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '', cardImage: null, detailImages: [], detailImageUrls: [] });
                       setShowAddProduct(true);
                     }}>
                       + Add Product
@@ -248,17 +257,65 @@ const AdminDashboard = () => {
 
                     <div className="form-group">
                       <label>Card Image (Select 1)</label>
-                      <div className="image-upload-box">
-                        <span className="plus-icon">+</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={cardImageInputRef}
+                        style={{ display: 'none' }}
+                        onChange={(e) => setNewProduct({ ...newProduct, cardImage: e.target.files[0] })}
+                      />
+                      <div
+                        className="image-upload-box"
+                        onClick={() => cardImageInputRef.current && cardImageInputRef.current.click()}
+                        style={{ overflow: 'hidden', position: 'relative' }}
+                      >
+                        {newProduct.cardImage ? (
+                          <img src={URL.createObjectURL(newProduct.cardImage)} alt="Card preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : newProduct.imageUrl ? (
+                          <img src={newProduct.imageUrl} alt="Current card image" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span className="plus-icon">+</span>
+                        )}
                       </div>
                     </div>
 
                     <div className="form-group">
                       <label>Detail Images (Select up to 3)</label>
                       <div className="image-upload-row">
-                        <div className="image-upload-box"><span className="plus-icon">+</span></div>
-                        <div className="image-upload-box"><span className="plus-icon">+</span></div>
-                        <div className="image-upload-box"><span className="plus-icon">+</span></div>
+                        {[0, 1, 2].map((index) => {
+                          const file = newProduct.detailImages[index];
+                          const url = newProduct.detailImageUrls[index];
+                          return (
+                            <div key={index}>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                ref={(el) => detailImagesInputRef.current[index] = el}
+                                style={{ display: 'none' }}
+                                onChange={(e) => {
+                                  if (e.target.files[0]) {
+                                    const newDetails = [...newProduct.detailImages];
+                                    newDetails[index] = e.target.files[0];
+                                    setNewProduct({ ...newProduct, detailImages: newDetails });
+                                  }
+                                }}
+                              />
+                              <div
+                                className="image-upload-box"
+                                onClick={() => detailImagesInputRef.current[index] && detailImagesInputRef.current[index].click()}
+                                style={{ overflow: 'hidden', position: 'relative' }}
+                              >
+                                {file ? (
+                                  <img src={URL.createObjectURL(file)} alt={`Detail preview ${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : url ? (
+                                  <img src={url} alt={`Detail image ${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                  <span className="plus-icon">+</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
 
