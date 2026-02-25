@@ -26,3 +26,4 @@ replay_pid*
 *.txt
 
 node_modules
+build
