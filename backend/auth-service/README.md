@@ -32,9 +32,9 @@ The Auth Service handles all authentication and authorization operations for the
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/auth/register` | Register a new user |
-| POST | `/auth/login` | Login and get JWT token |
-| POST | `/auth/logout` | Logout user |
+| POST | `/api/auth/register` | Register a new user |
+| POST | `/api/auth/login` | Login and get JWT token |
+| GET | `/api/auth/validate` | Validate JWT token |
 
 ## Request/Response Examples
 
