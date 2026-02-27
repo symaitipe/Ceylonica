@@ -1,4 +1,4 @@
-# Ceylonica
+# Project of Ceylonica
 
 A microservices-based e-commerce platform built with Spring Boot and React.
 
