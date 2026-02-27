@@ -59,6 +59,8 @@ This project follows a microservices architecture with:
 - JWT Authentication
 - MongoDB for data persistence
 
+---
+
 ## License
 
 MIT License
