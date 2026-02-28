@@ -4,6 +4,7 @@ import com.ceylonica.cart.entity.Cart;
 import com.ceylonica.cart.entity.CartItem;
 import com.ceylonica.cart.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -14,27 +15,23 @@ public class CartController {
     private CartService cartService;
 
     @GetMapping("/{userId}")
-    public Cart getCart(@PathVariable String userId) {
-        return cartService.getCart(userId);
+    public ResponseEntity<Cart> getCart(@PathVariable String userId) {
+        return ResponseEntity.ok(cartService.getCart(userId));
     }
 
     @PostMapping("/{userId}/add")
-    public Cart addToCart(@PathVariable String userId, @RequestBody CartItem item) {
-        try {
-            return cartService.addToCart(userId, item);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
+    public ResponseEntity<Cart> addItem(@PathVariable String userId, @RequestBody CartItem item) {
+        return ResponseEntity.ok(cartService.addItem(userId, item));
     }
 
     @DeleteMapping("/{userId}/remove/{productId}")
-    public Cart removeFromCart(@PathVariable String userId, @PathVariable String productId) {
-        return cartService.removeFromCart(userId, productId);
+    public ResponseEntity<Cart> removeItem(@PathVariable String userId, @PathVariable String productId) {
+        return ResponseEntity.ok(cartService.removeItem(userId, productId));
     }
 
     @DeleteMapping("/{userId}/clear")
-    public void clearCart(@PathVariable String userId) {
+    public ResponseEntity<Void> clearCart(@PathVariable String userId) {
         cartService.clearCart(userId);
+        return ResponseEntity.ok().build();
     }
 }
