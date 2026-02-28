@@ -1,12 +1,12 @@
 server:
-  port: 8084
+  port: 8085
 
 spring:
   application:
-    name: cart-service
+    name: order-service
   data:
     mongodb:
-      uri: mongodb://localhost:27017/ceylonica_cart
+      uri: mongodb://localhost:27017/ceylonica_orders
 
 eureka:
   client:

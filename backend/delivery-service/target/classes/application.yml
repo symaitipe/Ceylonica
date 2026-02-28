@@ -1,0 +1,25 @@
+server:
+  port: 8087
+
+spring:
+  application:
+    name: delivery-service
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/ceylonica_delivery
+
+delivery:
+  providers:
+    pickme:
+      api-url: https://api.pickme.lk
+      api-key: your-pickme-api-key
+    koombiyo:
+      api-url: https://api.koombiyo.lk
+      api-key: your-koombiyo-api-key
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true

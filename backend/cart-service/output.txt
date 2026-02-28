@@ -1,0 +1,29 @@
+* Host localhost:8084 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:8084...
+* Connected to localhost (::1) port 8084
+* using HTTP/1.x
+> POST /api/cart/kavi_user_01/add HTTP/1.1
+> Host: localhost:8084
+> User-Agent: curl/8.13.0
+> Accept: */*
+> 
+* Request completely sent off
+< HTTP/1.1 400 
+< Content-Type: application/json
+< Transfer-Encoding: chunked
+< Date: Mon, 16 Feb 2026 15:39:48 GMT
+< Connection: close
+< 
+{ [117 bytes data]
+100   111    0   111    0     0   7953      0 --:--:-- --:--:-- --:--:--  8538
+* shutting down connection #0
+{"timestamp":"2026-02-16T15:39:48.640Z","status":400,"error":"Bad Request","path":"/api/cart/kavi_user_01/add"}* URL rejected: Port number was not a decimal number between 0 and 65535
+* closing connection #-1
+curl: (3) URL rejected: Port number was not a decimal number between 0 and 65535
+* URL rejected: Malformed input to a URL function
+* closing connection #-1
+curl: (3) URL rejected: Malformed input to a URL function
