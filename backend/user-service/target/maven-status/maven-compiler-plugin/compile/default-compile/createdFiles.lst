@@ -1,7 +1,0 @@
-com\ceylonica\user\repository\UserRepository.class
-com\ceylonica\user\service\UserService.class
-com\ceylonica\user\exception\GlobalExceptionHandler.class
-com\ceylonica\user\model\Address.class
-com\ceylonica\user\controller\UserController.class
-com\ceylonica\user\UserServiceApplication.class
-com\ceylonica\user\model\User.class
