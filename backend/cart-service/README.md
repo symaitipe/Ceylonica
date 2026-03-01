@@ -33,11 +33,10 @@ The Cart Service manages shopping cart functionality for the Ceylonica platform.
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/cart` | Get user's cart |
-| POST | `/cart/items` | Add item to cart |
-| PUT | `/cart/items/{itemId}` | Update item quantity |
-| DELETE | `/cart/items/{itemId}` | Remove item from cart |
-| DELETE | `/cart` | Clear entire cart |
+| GET | `/api/cart/{userId}` | Get user's cart |
+| POST | `/api/cart/{userId}/add` | Add item to cart |
+| DELETE | `/api/cart/{userId}/remove/{productId}` | Remove item from cart |
+| DELETE | `/api/cart/{userId}/clear` | Clear entire cart |
 
 ## Request Headers
 | Header | Description |
