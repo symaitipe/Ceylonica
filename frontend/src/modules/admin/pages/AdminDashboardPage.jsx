@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getAllProducts, createProduct, deleteProduct, updateProduct } from '../../products/services/product.service';
 import { getOrders, updateOrderStatus } from '../../orders/services/order.service';
 import Loader from '../../../core/components/common/Loader';
-import { useAuth } from '../../../core/context/AuthContext';
+import { useAuth } from '../../auth/services/auth.context';
 
 const AdminDashboard = () => {
   const navigate = useNavigate();

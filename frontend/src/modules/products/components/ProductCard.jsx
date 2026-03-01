@@ -1,9 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../../cart/services/cart.context';
-
 const ProductCard = ({ product }) => {
-  const { addToCart } = useCart();
 
   return (
     <div className="product-card">
@@ -17,13 +14,6 @@ const ProductCard = ({ product }) => {
           <p className="product-price">Rs. {product.price.toFixed(2)}</p>
         </div>
       </Link>
-      <button
-        className="add-to-cart-btn"
-        onClick={() => addToCart(product.id, 1)}
-        disabled={!product.inStock}
-      >
-        {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-      </button>
     </div>
   );
 };

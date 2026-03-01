@@ -1,4 +1,4 @@
-import axios from '../../../core/api/axios.instance';
+import axios from 'axios';
 import { API_BASE_URL } from '../../../core/utils/constants';
 
 const mapProductDTO = (dto) => {

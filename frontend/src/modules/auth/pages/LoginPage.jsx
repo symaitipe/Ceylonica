@@ -17,8 +17,13 @@ const Login = () => {
     setLoading(true);
 
     try {
-      await login({ email, password });
-      navigate('/');
+      const response = await login({ email, password });
+
+      if (response.user?.role === 'ADMIN') {
+        navigate('/admin');
+      } else {
+        navigate('/');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');
     } finally {
