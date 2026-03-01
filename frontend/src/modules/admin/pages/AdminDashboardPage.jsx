@@ -1,22 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { getAllProducts, createProduct, deleteProduct } from '../../products/services/product.service';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAllProducts, createProduct, deleteProduct, updateProduct } from '../../products/services/product.service';
 import { getOrders, updateOrderStatus } from '../../orders/services/order.service';
 import Loader from '../../../core/components/common/Loader';
+import { useAuth } from '../../auth/services/auth.context';
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   const [activeTab, setActiveTab] = useState('products');
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showAddProduct, setShowAddProduct] = useState(false);
+  const [editingProductId, setEditingProductId] = useState(null);
   const [newProduct, setNewProduct] = useState({
     name: '',
     description: '',
     price: '',
     stock: '',
     category: '',
-    imageUrl: ''
+    imageUrl: '',
+    cardImage: null,
+    detailImages: [],
+    detailImageUrls: []
   });
+
+  const cardImageInputRef = useRef(null);
+  const detailImagesInputRef = useRef([]);
 
   useEffect(() => {
     if (activeTab === 'products') {
@@ -50,15 +62,42 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleEditProductClick = (product) => {
+    setEditingProductId(product.id);
+    setNewProduct({
+      name: product.name || '',
+      description: product.description || '',
+      price: product.price || '',
+      stock: product.stock || '',
+      category: product.category || '',
+      imageUrl: product.imageUrl || '',
+      cardImage: null,
+      detailImages: [],
+      detailImageUrls: product.detailImageUrls || []
+    });
+    setShowAddProduct(true);
+  };
+
+  const handleCancelForm = () => {
+    setShowAddProduct(false);
+    setEditingProductId(null);
+    setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '', cardImage: null, detailImages: [], detailImageUrls: [] });
+  };
+
   const handleAddProduct = async (e) => {
     e.preventDefault();
     try {
-      await createProduct(newProduct);
+      if (editingProductId) {
+        await updateProduct(editingProductId, newProduct);
+      } else {
+        await createProduct(newProduct);
+      }
       setShowAddProduct(false);
-      setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '' });
+      setEditingProductId(null);
+      setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '', cardImage: null, detailImages: [], detailImageUrls: [] });
       fetchProducts();
     } catch (err) {
-      console.error('Failed to add product', err);
+      console.error('Failed to save product', err);
     }
   };
 
@@ -85,147 +124,270 @@ const AdminDashboard = () => {
   if (loading) return <Loader />;
 
   return (
-    <div className="admin-dashboard">
-      <h2>Admin Dashboard</h2>
+    <div className="admin-overlay">
+      <aside className="admin-sidebar">
+        <div className="sidebar-brand" onClick={() => navigate('/')}>Ceylonica Admin</div>
+        <ul className="sidebar-menu">
+          <li className={activeTab === 'products' ? 'active' : ''} onClick={() => setActiveTab('products')}>Products</li>
+          <li className={activeTab === 'orders' ? 'active' : ''} onClick={() => setActiveTab('orders')}>Orders</li>
+          <li>Users</li>
+          <li>Settings</li>
+          <div className="sidebar-divider"></div>
+          <li onClick={() => navigate('/')}>Back to Store</li>
+        </ul>
+      </aside>
 
-      <div className="dashboard-tabs">
-        <button
-          className={activeTab === 'products' ? 'active' : ''}
-          onClick={() => setActiveTab('products')}
-        >
-          Products
-        </button>
-        <button
-          className={activeTab === 'orders' ? 'active' : ''}
-          onClick={() => setActiveTab('orders')}
-        >
-          Orders
-        </button>
-      </div>
+      <main className="admin-main-content">
+        <header className="admin-header">
+          <h1>Product Management</h1>
+          <div className="admin-profile">
+            <span>{user?.name || 'Admin User'}</span>
+            <div className="profile-avatar">
+              {user?.name ? user.name.charAt(0).toUpperCase() : 'A'}
+            </div>
+          </div>
+        </header>
 
-      {activeTab === 'products' && (
-        <div className="products-management">
-          <button className="add-btn" onClick={() => setShowAddProduct(true)}>
-            Add New Product
-          </button>
+        <div className="admin-card">
+          {activeTab === 'products' && (
+            <>
+              {!showAddProduct ? (
+                <>
+                  <div className="card-header">
+                    <h2>Products</h2>
+                    <button className="add-btn-primary" onClick={() => {
+                      setEditingProductId(null);
+                      setNewProduct({ name: '', description: '', price: '', stock: '', category: '', imageUrl: '', cardImage: null, detailImages: [], detailImageUrls: [] });
+                      setShowAddProduct(true);
+                    }}>
+                      + Add Product
+                    </button>
+                  </div>
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>PRODUCT NAME</th>
+                        <th>PRICE</th>
+                        <th>CATEGORY ID</th>
+                        <th>IMAGES</th>
+                        <th>ACTIONS</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {products.map(product => (
+                        <tr key={product.id}>
+                          <td className="product-name-col">
+                            <span className="product-name">{product.name}</span>
+                            <span className="product-id">{product.id}</span>
+                          </td>
+                          <td>${parseFloat(product.price || 0).toFixed(2)}</td>
+                          <td>{product.category}</td>
+                          <td>
+                            {product.imageUrl && <img src={product.imageUrl} alt={product.name} className="thumbnail-img" />}
+                          </td>
+                          <td>
+                            <div className="action-btns">
+                              <button className="btn-edit" onClick={() => handleEditProductClick(product)}>Edit</button>
+                              <button className="btn-delete" onClick={() => handleDeleteProduct(product.id)}>
+                                Delete
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                      {products.length === 0 && !loading && (
+                        <tr>
+                          <td colSpan="5" style={{ textAlign: 'center', color: '#9ca3af' }}>No products found</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </>
+              ) : (
+                <>
+                  <div className="modal-header">
+                    <h2>{editingProductId ? 'Edit Product' : 'Add New Product'}</h2>
+                    <button className="close-btn" onClick={handleCancelForm}>&times;</button>
+                  </div>
+                  <form onSubmit={handleAddProduct} className="modal-form">
+                    <div className="form-group">
+                      <label>Product Name</label>
+                      <input
+                        type="text"
+                        placeholder="Enter product name"
+                        value={newProduct.name}
+                        onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
+                        required
+                      />
+                    </div>
 
-          {showAddProduct && (
-            <form className="add-product-form" onSubmit={handleAddProduct}>
-              <input
-                type="text"
-                placeholder="Product Name"
-                value={newProduct.name}
-                onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-                required
-              />
-              <textarea
-                placeholder="Description"
-                value={newProduct.description}
-                onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-                required
-              />
-              <input
-                type="number"
-                placeholder="Price"
-                value={newProduct.price}
-                onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                required
-              />
-              <input
-                type="number"
-                placeholder="Stock"
-                value={newProduct.stock}
-                onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
-                required
-              />
-              <input
-                type="text"
-                placeholder="Category"
-                value={newProduct.category}
-                onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
-                required
-              />
-              <input
-                type="url"
-                placeholder="Image URL"
-                value={newProduct.imageUrl}
-                onChange={(e) => setNewProduct({ ...newProduct, imageUrl: e.target.value })}
-                required
-              />
-              <div className="form-actions">
-                <button type="submit">Add Product</button>
-                <button type="button" onClick={() => setShowAddProduct(false)}>Cancel</button>
-              </div>
-            </form>
+                    <div className="form-group">
+                      <label>Description</label>
+                      <textarea
+                        placeholder="Enter product description"
+                        value={newProduct.description}
+                        onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
+                        required
+                      />
+                    </div>
+
+                    <div className="form-row">
+                      <div className="form-group half">
+                        <label>Price</label>
+                        <input
+                          type="number"
+                          placeholder="0.00"
+                          value={newProduct.price}
+                          onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
+                          required
+                          step="0.01"
+                        />
+                      </div>
+                      <div className="form-group half">
+                        <label>Category ID</label>
+                        <input
+                          type="text"
+                          placeholder="Enter category ID"
+                          value={newProduct.category}
+                          onChange={(e) => setNewProduct({ ...newProduct, category: e.target.value })}
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Card Image (Select 1)</label>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        ref={cardImageInputRef}
+                        style={{ display: 'none' }}
+                        onChange={(e) => setNewProduct({ ...newProduct, cardImage: e.target.files[0] })}
+                      />
+                      <div
+                        className="image-upload-box"
+                        onClick={() => cardImageInputRef.current && cardImageInputRef.current.click()}
+                        style={{ overflow: 'hidden', position: 'relative' }}
+                      >
+                        {newProduct.cardImage ? (
+                          <img src={URL.createObjectURL(newProduct.cardImage)} alt="Card preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : newProduct.imageUrl ? (
+                          <img src={newProduct.imageUrl} alt="Current card image" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <span className="plus-icon">+</span>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="form-group">
+                      <label>Detail Images (Select up to 3)</label>
+                      <div className="image-upload-row">
+                        {[0, 1, 2].map((index) => {
+                          const file = newProduct.detailImages[index];
+                          const url = newProduct.detailImageUrls[index];
+                          return (
+                            <div key={index}>
+                              <input
+                                type="file"
+                                accept="image/*"
+                                ref={(el) => detailImagesInputRef.current[index] = el}
+                                style={{ display: 'none' }}
+                                onChange={(e) => {
+                                  if (e.target.files[0]) {
+                                    const newDetails = [...newProduct.detailImages];
+                                    newDetails[index] = e.target.files[0];
+                                    setNewProduct({ ...newProduct, detailImages: newDetails });
+                                  }
+                                }}
+                              />
+                              <div
+                                className="image-upload-box"
+                                onClick={() => detailImagesInputRef.current[index] && detailImagesInputRef.current[index].click()}
+                                style={{ overflow: 'hidden', position: 'relative' }}
+                              >
+                                {file ? (
+                                  <img src={URL.createObjectURL(file)} alt={`Detail preview ${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : url ? (
+                                  <img src={url} alt={`Detail image ${index}`} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                  <span className="plus-icon">+</span>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Hidden stock field to keep things working without visual clutter if unneeded */}
+                    <input
+                      type="hidden"
+                      value={newProduct.stock}
+                      onChange={(e) => setNewProduct({ ...newProduct, stock: e.target.value })}
+                    />
+
+                    <div className="modal-actions">
+                      <button type="button" className="btn-cancel" onClick={handleCancelForm}>Cancel</button>
+                      <button type="submit" className="btn-submit">
+                        {editingProductId ? 'Update Product' : 'Create Product'}
+                      </button>
+                    </div>
+                  </form>
+                </>
+              )}
+            </>
           )}
 
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Category</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map(product => (
-                <tr key={product.id}>
-                  <td>{product.name}</td>
-                  <td>Rs. {product.price}</td>
-                  <td>{product.stock}</td>
-                  <td>{product.category}</td>
-                  <td>
-                    <button className="edit-btn">Edit</button>
-                    <button className="delete-btn" onClick={() => handleDeleteProduct(product.id)}>
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {activeTab === 'orders' && (
+            <>
+              <div className="card-header">
+                <h2>Orders</h2>
+              </div>
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Customer</th>
+                    <th>Total</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {orders.map(order => (
+                    <tr key={order.id}>
+                      <td className="product-name-col">
+                        <span className="product-id">#{order.id}</span>
+                      </td>
+                      <td>{order.customerName}</td>
+                      <td>Rs. {order.totalAmount}</td>
+                      <td>{order.status}</td>
+                      <td>
+                        <select
+                          value={order.status}
+                          onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
+                          className="select-status"
+                        >
+                          <option value="PENDING">Pending</option>
+                          <option value="PROCESSING">Processing</option>
+                          <option value="SHIPPED">Shipped</option>
+                          <option value="DELIVERED">Delivered</option>
+                          <option value="CANCELLED">Cancelled</option>
+                        </select>
+                      </td>
+                    </tr>
+                  ))}
+                  {orders.length === 0 && !loading && (
+                    <tr>
+                      <td colSpan="5" style={{ textAlign: 'center', color: '#9ca3af' }}>No orders found</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </>
+          )}
         </div>
-      )}
-
-      {activeTab === 'orders' && (
-        <div className="orders-management">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orders.map(order => (
-                <tr key={order.id}>
-                  <td>#{order.id}</td>
-                  <td>{order.customerName}</td>
-                  <td>Rs. {order.totalAmount}</td>
-                  <td>{order.status}</td>
-                  <td>
-                    <select
-                      value={order.status}
-                      onChange={(e) => handleUpdateOrderStatus(order.id, e.target.value)}
-                    >
-                      <option value="PENDING">Pending</option>
-                      <option value="PROCESSING">Processing</option>
-                      <option value="SHIPPED">Shipped</option>
-                      <option value="DELIVERED">Delivered</option>
-                      <option value="CANCELLED">Cancelled</option>
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      </main>
     </div>
   );
 };
