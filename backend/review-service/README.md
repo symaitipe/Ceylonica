@@ -34,9 +34,9 @@ The Review Service manages product reviews and ratings for the Ceylonica platfor
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/reviews` | Submit a new review |
-| GET | `/reviews/product/{productId}` | Get all reviews for a product |
-| GET | `/reviews/product/{productId}/summary` | Get rating summary |
+| POST | `/api/reviews` | Submit a new review |
+| GET | `/api/reviews/product/{productId}` | Get reviews for a product |
+| GET | `/api/reviews/user/{userId}` | Get reviews by a user |
 
 ## Request/Response Examples
 
