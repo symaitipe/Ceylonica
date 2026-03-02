@@ -4,10 +4,9 @@ server:
 spring:
   application:
     name: review-service
-
   data:
     mongodb:
-      uri: mongodb://localhost:27017/ceylonica_reviews
+      uri: mongodb+srv://kavi:ImluNYDuYoeXJy5G@cluster0.ncaaifi.mongodb.net/ceylonica_review?retryWrites=true&w=majority
 
 eureka:
   client:
