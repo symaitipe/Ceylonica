@@ -7,7 +7,7 @@ spring:
 
   data:
   mongodb:
-    uri: mongodb://localhost:27017/ceylonica_user
+    uri: mongodb://localhost:27017/ceylonica_users
 
 eureka:
   client:
