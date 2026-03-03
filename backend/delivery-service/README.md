@@ -53,9 +53,7 @@ The Delivery Service manages all delivery and shipping operations for the Ceylon
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/delivery` | Create delivery request |
-| GET | `/delivery/track/{trackingId}` | Track delivery |
-| PATCH | `/delivery/{trackingId}/status` | Update delivery status |
+| POST | `/api/delivery/request` | Create delivery request |
 
 ## Request/Response Examples
 
