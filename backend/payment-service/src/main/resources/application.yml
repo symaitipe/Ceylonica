@@ -5,24 +5,16 @@ spring:
   application:
     name: payment-service
 
-    data:
-      mongodb:
-        host: localhost
-        port: 27017
-        database: ceylonica_orders
-
-eureka:
-  client:
-    enabled: false
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-  instance:
-    prefer-ip-address: true
+  mongodb:
+    uri: mongodb://localhost:27017/ceylonica_payments
 
 stripe:
   secret-key:
   publishable-key:
 
-logging:
-  level:
-    com.ceylonica.paymentservice: DEBUG
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    prefer-ip-address: true

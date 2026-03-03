@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,20 +27,94 @@ public class PaymentService {
     private final PaymentRepository paymentRepository;
 
     // ---------------------------------------------------------------
-    // Create a Stripe PaymentIntent and save as PENDING
-    // Returns clientSecret → frontend uses it to confirm with Stripe.js
+    // Check the payment possibility
     // ---------------------------------------------------------------
     public PaymentResponse createPayment(String userId, PaymentRequest request) throws StripeException {
         log.info("Creating payment for orderId={}, userId={}", request.getOrderId(), userId);
 
-        // Prevent duplicate payment for same order
-        paymentRepository.findByOrderId(request.getOrderId()).ifPresent(existing -> {
-            if (existing.getStatus() == PaymentStatus.SUCCESS) {
-                throw new IllegalStateException("Order " + request.getOrderId() + " is already paid.");
-            }
-        });
+        // Check if a payment already exists for this order
+        Optional<Payment> existingPayment = paymentRepository.findByOrderId(request.getOrderId());
 
-        // Create PaymentIntent with Stripe
+        if (existingPayment.isPresent()) {
+            Payment existing = existingPayment.get();
+
+            switch (existing.getStatus()) {
+
+                case SUCCESS:
+                    throw new IllegalStateException(
+                            "Order " + request.getOrderId() + " is already paid.");
+
+                case REFUNDED:
+                    throw new IllegalStateException(
+                            "Order " + request.getOrderId() + " has been refunded.");
+
+                case PENDING:
+                    throw new IllegalStateException(
+                            "A payment for order " + request.getOrderId() +
+                                    " is already in progress. Please complete or wait before retrying.");
+
+                case FAILED:
+                    // Allow retry — create new Stripe PaymentIntent and UPDATE existing record
+                    log.info("Retrying failed payment for orderId={}", request.getOrderId());
+                    return retryFailedPayment(existing, request,userId);
+
+                default:
+                    throw new IllegalStateException("Unexpected payment status.");
+            }
+        }
+
+        // No existing payment — create fresh
+        return createNewPayment(userId, request);
+    }
+
+
+    // ---------------------------------------------------------------
+    // Create a brand new payment (first attempt)
+    // ---------------------------------------------------------------
+    private PaymentResponse createNewPayment(String userId, PaymentRequest request) throws StripeException {
+
+        PaymentIntent intent = createStripeIntent(request, userId);
+
+        Payment payment = Payment.builder()
+                .orderId(request.getOrderId())
+                .userId(userId)
+                .amount(request.getAmount())
+                .currency(request.getCurrency().toLowerCase())
+                .status(PaymentStatus.PENDING)
+                .stripePaymentIntentId(intent.getId())
+                .stripeClientSecret(intent.getClientSecret())
+                .build();
+
+        payment = paymentRepository.save(payment);
+        log.info("New payment created id={} for orderId={}", payment.getId(), payment.getOrderId());
+
+        return toResponse(payment);
+    }
+
+    // ---------------------------------------------------------------
+    // Retry a failed payment — update existing record (don't create new)
+    // ---------------------------------------------------------------
+    private PaymentResponse retryFailedPayment(Payment existing, PaymentRequest request, String userId)
+            throws StripeException {
+
+        PaymentIntent intent = createStripeIntent(request, userId);  // ← use passed userId
+
+        existing.setStatus(PaymentStatus.PENDING);
+        existing.setStripePaymentIntentId(intent.getId());
+        existing.setStripeClientSecret(intent.getClientSecret());
+        existing.setFailureMessage(null);
+
+        existing = paymentRepository.save(existing);
+        log.info("Payment retry saved id={} for orderId={}", existing.getId(), existing.getOrderId());
+
+        return toResponse(existing);
+    }
+
+    // ---------------------------------------------------------------
+    // Shared Stripe PaymentIntent creation
+    // ---------------------------------------------------------------
+    private PaymentIntent createStripeIntent(PaymentRequest request, String userId) throws StripeException {
+
         PaymentIntentCreateParams params = PaymentIntentCreateParams.builder()
                 .setAmount(request.getAmount())
                 .setCurrency(request.getCurrency().toLowerCase())
@@ -54,22 +129,12 @@ public class PaymentService {
 
         PaymentIntent intent = PaymentIntent.create(params);
         log.info("Stripe PaymentIntent created: {}", intent.getId());
-
-        // Save to MongoDB
-        Payment payment = Payment.builder()
-                .orderId(request.getOrderId())
-                .userId(userId)
-                .amount(request.getAmount())
-                .currency(request.getCurrency().toLowerCase())
-                .status(PaymentStatus.PENDING)
-                .stripePaymentIntentId(intent.getId())
-                .stripeClientSecret(intent.getClientSecret())
-                .build();
-
-        payment = paymentRepository.save(payment);
-        log.info("Payment saved to Mongo with id={}", payment.getId());
-        return toResponse(payment);
+        return intent;
     }
+
+
+
+
 
     // ---------------------------------------------------------------
     // Confirm payment after Stripe webhook / frontend callback
