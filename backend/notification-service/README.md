@@ -44,9 +44,12 @@ The Notification Service handles all communication and notification operations f
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/notifications/email` | Send custom email |
-| POST | `/notifications/order-confirmation` | Send order confirmation |
-| POST | `/notifications/shipping` | Send shipping notification |
+| POST | `/api/feedback` | Submit user feedback |
+| GET | `/api/feedback` | Retrieve all feedback |
+| PUT | `/api/feedback/{id}/respond` | Respond to a feedback |
+| POST | `/api/notifications/send` | Send a notification |
+| GET | `/api/notifications/user/{userId}` | Get user notifications |
+| PUT | `/api/notifications/{id}/read` | Mark as read |
 
 ## Request/Response Examples
 
