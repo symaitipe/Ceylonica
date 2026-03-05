@@ -1,122 +1,91 @@
-# Payment Service
+# Payment Service API Documentation
 
-## Overview
-The Payment Service handles all payment processing operations for the Ceylonica platform. It manages payment transactions, refunds, and payment status tracking.
+Base URL:
+http://localhost:8086/api/payments
 
-## Port
-- **8086**
+---
 
-## Features
+## Create Payment
 
-### 💳 Payment Processing
-- Process card payments
-- Support Cash on Delivery (COD)
-- Generate transaction IDs
-- Record payment details
+POST /api/payments
 
-### 💰 Refund Management
-- Process refunds for cancelled orders
-- Track refund status
-- Maintain refund records
+Headers:
+X-User-Id: user-123
+Content-Type: application/json
 
-### 📊 Transaction Tracking
-- View payment status
-- Transaction history
-- Payment verification
-
-### 🔒 Secure Transactions
-- Secure payment data handling
-- Transaction ID generation
-- Payment validation
-
-## Payment Methods
-
-| Method | Code | Description |
-|--------|------|-------------|
-| Credit/Debit Card | `card` | Online card payment |
-| Cash on Delivery | `cod` | Pay when delivered |
-
-## API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST | `/payments/process` | Process a payment |
-| GET | `/payments/status/{transactionId}` | Get payment status |
-| POST | `/payments/refund/{transactionId}` | Process refund |
-
-## Request/Response Examples
-
-### Process Payment
-```json
-POST /payments/process
+Request Body:
 {
-  "orderId": "order123",
-  "amount": 3000.00,
-  "paymentMethod": "card"
+"orderId": "order-001",
+"amount": 150000,
+"currency": "usd"
 }
 
 Response:
-{
-  "transactionId": "txn_abc123",
-  "orderId": "order123",
-  "amount": 3000.00,
-  "paymentMethod": "card",
-  "status": "SUCCESS"
-}
-```
+Returns Stripe clientSecret and creates a PENDING payment record.
 
-### Get Payment Status
-```json
-GET /payments/status/txn_abc123
+---
 
-Response:
-{
-  "transactionId": "txn_abc123",
-  "status": "COMPLETED"
-}
-```
+## Confirm Payment
 
-### Process Refund
-```json
-POST /payments/refund/txn_abc123
+POST /api/payments/confirm/{paymentIntentId}
 
-Response:
-{
-  "transactionId": "txn_abc123",
-  "status": "REFUNDED"
-}
-```
+Confirms payment after Stripe processing.
+Updates payment status to SUCCESS or FAILED.
 
-## Payment Statuses
+---
 
-| Status | Description |
-|--------|-------------|
-| `SUCCESS` | Payment processed successfully |
-| `FAILED` | Payment processing failed |
-| `PENDING` | Payment awaiting confirmation |
-| `COMPLETED` | Payment fully completed |
-| `REFUNDED` | Payment refunded |
+## Get Payment by ID
 
-## Dependencies
-- Spring Boot Web
-- Spring Data MongoDB
-- Spring Cloud Netflix Eureka Client
-- Lombok
+GET /api/payments/{paymentId}
 
-## Database
-- **MongoDB Database**: `ceylonica_payments`
-- **Collection**: `transactions`
+Returns payment details.
 
-## Configuration
-See `src/main/resources/application.yml` for detailed configuration.
+---
 
-## Running the Service
-```bash
-mvn spring-boot:run
-```
+## Get Payment by Order ID
 
-## Future Enhancements
-- Integration with payment gateways (Stripe, PayPal)
-- Support for local payment methods
-- Recurring payment support
-- Payment analytics dashboard
+GET /api/payments/order/{orderId}
+
+Returns payment details for a given order.
+
+---
+
+## Get My Payments
+
+GET /api/payments/my-payments
+
+Headers:
+X-User-Id: user-123
+
+Returns all payments for current user.
+
+---
+
+## Admin Endpoints
+
+### Get All Payments
+GET /api/payments/admin/all
+Header:
+X-User-Role: ADMIN
+
+### Refund Payment
+POST /api/payments/{paymentId}/refund
+Header:
+X-User-Role: ADMIN
+
+---
+
+## Payment Status Flow
+
+PENDING → SUCCESS → REFUNDED  
+PENDING → FAILED
+
+---
+
+## Technology Stack
+
+- Spring Boot
+- MongoDB
+- Stripe PaymentIntent API
+- Spring Security (Stateless)
+- REST API Architecture
