@@ -18,10 +18,7 @@ public class NotificationController {
     @Autowired
     private EmailService emailService;
 
-    /**
-     * POST /notifications/email
-     * Send a fully custom email (to, subject, body).
-     */
+    
     @PostMapping("/email")
     public ResponseEntity<?> sendCustomEmail(@RequestBody EmailRequest request) {
         try {
@@ -33,10 +30,7 @@ public class NotificationController {
         }
     }
 
-    /**
-     * POST /notifications/order-confirmation
-     * Send an order confirmation email.
-     */
+   
     @PostMapping("/order-confirmation")
     public ResponseEntity<?> sendOrderConfirmation(@RequestBody OrderRequest request) {
         try {
@@ -53,10 +47,7 @@ public class NotificationController {
         }
     }
 
-    /**
-     * POST /notifications/shipping
-     * Send a shipping notification email with tracking info.
-     */
+  
     @PostMapping("/shipping")
     public ResponseEntity<?> sendShippingNotification(@RequestBody ShippingRequest request) {
         try {
