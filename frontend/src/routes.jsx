@@ -1,14 +1,14 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Home from './modules/products/pages/HomePage';
-import Login from './modules/auth/pages/LoginPage';
-import Register from './modules/auth/pages/RegisterPage';
-import ProductDetails from './modules/products/pages/ProductDetailsPage';
-import Cart from './modules/cart/pages/CartPage';
-import Checkout from './modules/cart/pages/CheckoutPage';
-import Orders from './modules/orders/pages/OrdersPage';
-import AdminDashboard from './modules/admin/pages/AdminDashboardPage';
-
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "./modules/products/pages/HomePage";
+import Login from "./modules/auth/pages/LoginPage";
+import Register from "./modules/auth/pages/RegisterPage";
+import ProductDetails from "./modules/products/pages/ProductDetailsPage";
+import Cart from "./modules/cart/pages/CartPage";
+import Checkout from "./modules/cart/pages/CheckoutPage";
+import Orders from "./modules/orders/pages/OrdersPage";
+import AdminDashboard from "./modules/admin/pages/AdminDashboardPage";
+import MockCartLoader from "./modules/cart/pages/MockCartLoader";
 const AppRoutes = () => {
   return (
     <Routes>
@@ -20,6 +20,8 @@ const AppRoutes = () => {
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/orders" element={<Orders />} />
       <Route path="/admin" element={<AdminDashboard />} />
+      //Remove the mock cart once servces integrated
+      <Route path="/mock-cart" element={<MockCartLoader />} />
     </Routes>
   );
 };
