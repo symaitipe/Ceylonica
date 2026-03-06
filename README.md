@@ -1,4 +1,4 @@
-# Ceylonica
+# Project of Ceylonica
 
 A microservices-based e-commerce platform built with Spring Boot and React.
 
@@ -58,6 +58,8 @@ This project follows a microservices architecture with:
 - API Gateway (Spring Cloud Gateway)
 - JWT Authentication
 - MongoDB for data persistence
+
+---
 
 ## License
 
