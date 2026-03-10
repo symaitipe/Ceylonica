@@ -1,0 +1,82 @@
+.product-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+}
+
+/* Product Image */
+.product-image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  background: #f7f7f7;
+}
+
+.product-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.08);
+}
+
+/* Product Info */
+.product-info {
+  padding: 1rem;
+  flex-grow: 1;
+}
+
+.product-name {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 0.4rem;
+}
+
+.product-price {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c7a7b;
+  margin-bottom: 0.5rem;
+}
+
+.product-description {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Button */
+.add-to-cart-btn {
+  margin: 1rem;
+  padding: 0.7rem;
+  background: #1a1a1a;
+  color: white;
+  font-weight: 600;
+  border-radius: 6px;
+  transition: all 0.25s ease;
+}
+
+.add-to-cart-btn:hover {
+  background: #2c3e50;
+}
+
+/* Remove link underline */
+.product-card a {
+  text-decoration: none;
+  color: inherit;
+}

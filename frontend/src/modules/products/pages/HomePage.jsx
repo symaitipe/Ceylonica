@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import ProductCard from '../components/ProductCard';
-import Loader from '../../../core/components/common/Loader';
-import { getAllProducts } from '../services/product.service';
+import React, { useState, useEffect } from "react";
+import ProductCard from "../components/ProductCard";
+import Loader from "../../../core/components/common/Loader";
+import { getAllProducts } from "../services/product.service";
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -18,7 +18,7 @@ const Home = () => {
       const data = await getAllProducts();
       setProducts(data);
     } catch (err) {
-      setError('Failed to load products');
+      setError("Failed to load products");
       console.error(err);
     } finally {
       setLoading(false);
@@ -38,8 +38,8 @@ const Home = () => {
       <section className="products-section">
         <h2>Featured Products</h2>
         <div className="products-grid">
-          {products.map(product => (
-            <ProductCard key={product.id} product={product} />
+          {products.map((product) => (
+            <ProductCard key={product.productId} product={product} />
           ))}
         </div>
       </section>
