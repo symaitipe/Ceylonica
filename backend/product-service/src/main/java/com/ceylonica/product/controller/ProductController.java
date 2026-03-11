@@ -9,37 +9,38 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 
 @RestController
+@RequestMapping("/api/products")
 public class ProductController {
 
     @Autowired
     ProductServiceImpl productService;
 
-    @PostMapping(value = "/api/addproduct")
+    @PostMapping(value = "/addproduct")
     public ProductDTO addProduct(@ModelAttribute ProductDTO productDTO) {
         return productService.addProduct(productDTO);
     }
 
-    @GetMapping(value = "/api/product/{productId}")
+    @GetMapping(value = "/{productId}")
     public ProductDTO getProduct(@PathVariable String productId) {
         return productService.getByProductId(productId);
     }
 
-    @GetMapping(value = "/api/productlist")
+    @GetMapping(value = "/productlist")
     public ArrayList<ProductDTO> getProductList() {
         return productService.getAllProducts();
     }
 
-    @GetMapping(value = "/api/productsearch")
+    @GetMapping(value = "/productsearch")
     public ArrayList<ProductDTO> searchProduct(@RequestParam String keyword) {
         return productService.searchProducts(keyword);
     }
 
-    @PutMapping(value = "/api/updateproduct")
+    @PutMapping(value = "/updateproduct")
     public ProductDTO updateProduct(@ModelAttribute ProductDTO productDTO) {
         return productService.updateProduct(productDTO);
     }
 
-    @DeleteMapping(value = "/api/product/{productId}")
+    @DeleteMapping(value = "/{productId}")
     public String deleteProduct(@PathVariable String productId) {
         return productService.deleteProduct(productId);
     }
