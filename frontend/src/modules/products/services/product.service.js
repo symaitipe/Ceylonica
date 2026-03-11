@@ -1,11 +1,11 @@
 import axios from "../../../core/api/axios.instance";
 import { API_BASE_URL } from "../../../core/utils/constants";
 
-//const PRODUCT_API = `${API_BASE_URL}/products`;
-const PRODUCT_API = `http://localhost:8083/products`;
+const PRODUCT_API = `${API_BASE_URL}/products`;
 
 export const getAllProducts = async (params) => {
   const response = await axios.get(`${PRODUCT_API}/productlist`, { params });
+  console.log("API response:", response.data); // Add this
   return response.data;
 };
 

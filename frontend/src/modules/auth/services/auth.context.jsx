@@ -1,13 +1,17 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { login as loginApi, register as registerApi, logout as logoutApi } from './auth.service';
-import { getToken, setToken, removeToken, decodeToken } from './auth.utils';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import {
+  login as loginApi,
+  register as registerApi,
+  logout as logoutApi,
+} from "./auth.service";
+import { getToken, setToken, removeToken, decodeToken } from "./auth.utils";
 
 const AuthContext = createContext();
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };
@@ -18,14 +22,17 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const token = getToken();
+
     if (token) {
       const decoded = decodeToken(token);
+
       if (decoded && decoded.exp * 1000 > Date.now()) {
         setUser(decoded);
       } else {
         removeToken();
       }
     }
+
     setLoading(false);
   }, []);
 
@@ -46,7 +53,7 @@ export const AuthProvider = ({ children }) => {
     try {
       await logoutApi();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     } finally {
       removeToken();
       setUser(null);
@@ -59,12 +66,8 @@ export const AuthProvider = ({ children }) => {
     register,
     logout,
     loading,
-    isAuthenticated: !!user
+    isAuthenticated: !!user,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {!loading && children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

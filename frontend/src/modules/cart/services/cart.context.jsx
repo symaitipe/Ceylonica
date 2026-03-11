@@ -1,13 +1,13 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import * as cartApi from './cart.service';
-import { useAuth } from '../../auth/services/auth.context';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import * as cartApi from "./cart.service";
+import { useAuth } from "../../auth/services/auth.context";
 
 const CartContext = createContext();
 
 export const useCart = () => {
   const context = useContext(CartContext);
   if (!context) {
-    throw new Error('useCart must be used within a CartProvider');
+    throw new Error("useCart must be used within a CartProvider");
   }
   return context;
 };
@@ -22,7 +22,7 @@ export const CartProvider = ({ children }) => {
       fetchCart();
     } else {
       // Load from localStorage for guest users
-      const savedCart = localStorage.getItem('cart');
+      const savedCart = localStorage.getItem("cart");
       if (savedCart) {
         setCartItems(JSON.parse(savedCart));
       }
@@ -31,7 +31,7 @@ export const CartProvider = ({ children }) => {
 
   useEffect(() => {
     if (!isAuthenticated) {
-      localStorage.setItem('cart', JSON.stringify(cartItems));
+      localStorage.setItem("cart", JSON.stringify(cartItems));
     }
   }, [cartItems, isAuthenticated]);
 
@@ -39,39 +39,43 @@ export const CartProvider = ({ children }) => {
     try {
       setLoading(true);
       const data = await cartApi.getCart();
+      console.log("Full cart response:", JSON.stringify(data));
       setCartItems(data.items || []);
     } catch (error) {
-      console.error('Failed to fetch cart:', error);
+      console.error("Failed to fetch cart:", error);
     } finally {
       setLoading(false);
     }
   };
 
-  const addToCart = async (productId, quantity) => {
+  const addToCart = async (item) => {
     try {
       if (isAuthenticated) {
-        await cartApi.addToCart(productId, quantity);
+        await cartApi.addToCart(item);
         await fetchCart();
       } else {
-        // Handle local cart for guest users
-        const existingItem = cartItems.find(item => item.id === productId);
+        const existingItem = cartItems.find(
+          (i) => i.productId === item.productId,
+        );
         if (existingItem) {
-          setCartItems(cartItems.map(item =>
-            item.id === productId
-              ? { ...item, quantity: item.quantity + quantity }
-              : item
-          ));
+          setCartItems(
+            cartItems.map((i) =>
+              i.productId === item.productId
+                ? { ...i, quantity: i.quantity + item.quantity }
+                : i,
+            ),
+          );
         } else {
-          setCartItems([...cartItems, { id: productId, quantity }]);
+          setCartItems([...cartItems, item]);
         }
       }
     } catch (error) {
-      console.error('Failed to add to cart:', error);
+      console.error("Failed to add to cart:", error);
     }
   };
-
   const updateQuantity = async (itemId, quantity) => {
     if (quantity < 1) {
+      console.log("called update q and check q<1");
       removeFromCart(itemId);
       return;
     }
@@ -81,12 +85,16 @@ export const CartProvider = ({ children }) => {
         await cartApi.updateCartItem(itemId, quantity);
         await fetchCart();
       } else {
-        setCartItems(cartItems.map(item =>
-          item.id === itemId ? { ...item, quantity } : item
-        ));
+        setCartItems(
+          cartItems.map((item) =>
+            cartItems.map((item) =>
+              item.productId === itemId ? { ...item, quantity } : item,
+            ),
+          ),
+        );
       }
     } catch (error) {
-      console.error('Failed to update quantity:', error);
+      console.error("Failed to update quantity:", error);
     }
   };
 
@@ -96,10 +104,10 @@ export const CartProvider = ({ children }) => {
         await cartApi.removeFromCart(itemId);
         await fetchCart();
       } else {
-        setCartItems(cartItems.filter(item => item.id !== itemId));
+        setCartItems(cartItems.filter((item) => item.productId !== itemId));
       }
     } catch (error) {
-      console.error('Failed to remove from cart:', error);
+      console.error("Failed to remove from cart:", error);
     }
   };
 
@@ -110,13 +118,13 @@ export const CartProvider = ({ children }) => {
       }
       setCartItems([]);
     } catch (error) {
-      console.error('Failed to clear cart:', error);
+      console.error("Failed to clear cart:", error);
     }
   };
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + (item.price || 0) * item.quantity,
-    0
+    0,
   );
 
   const value = {
@@ -127,12 +135,8 @@ export const CartProvider = ({ children }) => {
     removeFromCart,
     clearCart,
     totalPrice,
-    itemCount: cartItems.length
+    itemCount: cartItems.length,
   };
 
-  return (
-    <CartContext.Provider value={value}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

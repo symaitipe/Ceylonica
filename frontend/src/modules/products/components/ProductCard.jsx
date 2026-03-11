@@ -8,7 +8,13 @@ const ProductCard = ({ product }) => {
 
   const handleAddToCart = (e) => {
     e.preventDefault();
-    addToCart(product.productId, 1);
+    addToCart({
+      productId: product.productId,
+      name: product.productName,
+      imageUrl: product.cardImageUrls?.[0],
+      price: product.productPrice,
+      quantity: 1,
+    });
   };
 
   return (
