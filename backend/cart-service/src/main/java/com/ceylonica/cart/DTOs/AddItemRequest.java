@@ -1,8 +1,6 @@
-package com.ceylonica.cart.entity;
+package com.ceylonica.cart.DTOs;
 
-public class CartItem {
-
-    private String id;
+public class AddItemRequest {
 
     private String productId;
     private String name;
@@ -10,15 +8,7 @@ public class CartItem {
     private double price;
     private int quantity;
 
-    public CartItem() {}
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+    public AddItemRequest() {}
 
     public String getProductId() {
         return productId;

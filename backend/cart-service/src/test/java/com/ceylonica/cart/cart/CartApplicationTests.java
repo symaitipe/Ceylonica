@@ -1,4 +1,4 @@
-package com.ceylonica.cart;
+package com.ceylonica.cart.cart;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
