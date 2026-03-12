@@ -25,4 +25,9 @@ public interface ProductService {
     ArrayList<ProductDTO> searchProducts(String keyword);
 
     String deleteProduct(String productId);
+
+    // Stock management
+    boolean checkStock(String productId, int requiredQuantity);
+
+    void reduceStock(String productId, int quantity);
 }

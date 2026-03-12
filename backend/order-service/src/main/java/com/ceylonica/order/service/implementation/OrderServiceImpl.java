@@ -1,7 +1,9 @@
 package com.ceylonica.order.service.implementation;
 
+import com.ceylonica.order.client.ProductClient;
 import com.ceylonica.order.model.DTOs.CreateOrderRequest;
 import com.ceylonica.order.model.Order;
+import com.ceylonica.order.model.OrderItem;
 import com.ceylonica.order.model.OrderStatus;
 import com.ceylonica.order.repository.OrderRepository;
 import com.ceylonica.order.service.OrderService;
@@ -18,14 +20,26 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private ProductClient productClient;
+
     @Override
     public Order createOrder(CreateOrderRequest request) {
 
-        // Always calculate total on the backend — never trust frontend values
+        // Step 1 — Check stock for all items before doing anything
+        for (OrderItem item : request.getItems()) {
+            boolean inStock = productClient.checkStock(item.getProductId(), item.getQuantity());
+            if (!inStock) {
+                throw new RuntimeException("Insufficient stock for product: " + item.getProductName());
+            }
+        }
+
+        // Step 2 — Calculate total on the backend (never trust frontend values)
         BigDecimal total = request.getItems().stream()
                 .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
+        // Step 3 — Create and save the order
         Order order = new Order();
         order.setUserId(request.getUserId());
         order.setCustomerName(request.getCustomerName());
@@ -37,7 +51,14 @@ public class OrderServiceImpl implements OrderService {
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
 
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        // Step 4 — Reduce stock only after order is saved successfully
+        for (OrderItem item : request.getItems()) {
+            productClient.reduceStock(item.getProductId(), item.getQuantity());
+        }
+
+        return savedOrder;
     }
 
     @Override

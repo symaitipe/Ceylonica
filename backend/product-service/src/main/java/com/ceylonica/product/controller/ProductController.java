@@ -44,4 +44,20 @@ public class ProductController {
     public String deleteProduct(@PathVariable String productId) {
         return productService.deleteProduct(productId);
     }
+
+    // ── Stock endpoints (internal use only — not exposed via gateway) ──
+
+    @PostMapping("/{productId}/check-stock")
+    public ResponseEntity<Boolean> checkStock(@PathVariable String productId,
+                                              @RequestParam int quantity) {
+        boolean inStock = productService.checkStock(productId, quantity);
+        return ResponseEntity.ok(inStock);
+    }
+
+    @PostMapping("/{productId}/reduce-stock")
+    public ResponseEntity<Void> reduceStock(@PathVariable String productId,
+                                            @RequestParam int quantity) {
+        productService.reduceStock(productId, quantity);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -250,4 +250,28 @@ public class ProductServiceImpl implements ProductService {
 
         return uniqueFileName;
     }
+
+    // ── Stock Management ──────────────────────────────────────────────
+
+    @Override
+    public boolean checkStock(String productId, int requiredQuantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+        return product.getStockQuantity() != null && product.getStockQuantity() >= requiredQuantity;
+    }
+
+    @Override
+    public void reduceStock(String productId, int quantity) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+
+        int currentStock = product.getStockQuantity() != null ? product.getStockQuantity() : 0;
+
+        if (currentStock < quantity) {
+            throw new RuntimeException("Insufficient stock for product: " + product.getProductName());
+        }
+
+        product.setStockQuantity(currentStock - quantity);
+        productRepository.save(product);
+    }
 }

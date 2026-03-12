@@ -2,33 +2,45 @@ package com.ceylonica.order.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<Map<String, Object>> handleIllegalState(IllegalStateException ex) {
 
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.BAD_REQUEST.value());
-        error.put("error", ex.getMessage());
-
-        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    // 400 — Business logic errors (insufficient stock, invalid data, etc.)
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<Map<String, Object>> handleRuntimeException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                "status", 400,
+                "error", "Bad Request",
+                "message", ex.getMessage(),
+                "timestamp", LocalDateTime.now().toString()
+        ));
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Map<String, Object>> handleRuntime(RuntimeException ex) {
+    // 409 — Conflict errors (cannot cancel shipped order, etc.)
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalStateException(IllegalStateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                "status", 409,
+                "error", "Conflict",
+                "message", ex.getMessage(),
+                "timestamp", LocalDateTime.now().toString()
+        ));
+    }
 
-        Map<String, Object> error = new HashMap<>();
-        error.put("timestamp", LocalDateTime.now());
-        error.put("status", HttpStatus.NOT_FOUND.value());
-        error.put("error", ex.getMessage());
-
-        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    // 500 — Unexpected errors
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of(
+                "status", 500,
+                "error", "Internal Server Error",
+                "message", "An unexpected error occurred",
+                "timestamp", LocalDateTime.now().toString()
+        ));
     }
 }

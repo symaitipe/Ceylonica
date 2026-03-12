@@ -21,6 +21,7 @@ public class ProductDTO {
     private Map<String, Object> additionalInformation;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private Integer stockQuantity;
 
     public ProductDTO(String productName, String productDescription, BigDecimal productPrice, Integer categoryId,
             List<MultipartFile> cardImages, List<MultipartFile> detailImages, Map<String, Object> additionalInformation,
@@ -135,4 +136,9 @@ public class ProductDTO {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public Integer getStockQuantity() { return stockQuantity; }
+
+    public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
+
 }
