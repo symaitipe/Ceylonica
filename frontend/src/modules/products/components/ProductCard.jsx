@@ -33,8 +33,12 @@ const ProductCard = ({ product }) => {
         </div>
       </Link>
 
-      <button className="add-to-cart-btn" onClick={handleAddToCart}>
-        Add to Cart
+      <button
+        className="add-to-cart-btn"
+        onClick={handleAddToCart}
+        disabled={product.stockQuantity < 1}
+      >
+        {product.stockQuantity < 1 ? "Out of Stock" : "Add to Cart"}
       </button>
     </div>
   );
