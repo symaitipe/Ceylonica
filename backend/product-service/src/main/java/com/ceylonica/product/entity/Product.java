@@ -23,6 +23,7 @@ public class Product {
     private List<String> cardImageURLs;
     private List<String> detailImageURLs;
     private Map<String, Object> additionalInformation;
+    private Integer stockQuantity;
 
     @CreatedDate
     private Instant createdAt;
@@ -126,5 +127,13 @@ public class Product {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Integer getStockQuantity() {
+        return stockQuantity;
+    }
+
+    public void setStockQuantity(Integer stockQuantity){
+        this.stockQuantity = stockQuantity;
     }
 }

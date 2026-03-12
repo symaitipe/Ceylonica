@@ -31,8 +31,10 @@ const Checkout = () => {
 
     try {
       const orderData = {
+        customerName: formData.fullName,
         items: cartItems.map((item) => ({
           productId: item.productId,
+          productName: item.name,
           quantity: item.quantity,
           price: item.price,
         })),
@@ -174,7 +176,7 @@ const Checkout = () => {
         <div className="order-summary">
           <h3>Order Summary</h3>
           {cartItems.map((item) => (
-            <div key={item.id} className="summary-item">
+            <div key={item.productId} className="summary-item">
               <span>
                 {item.name} x {item.quantity}
               </span>
