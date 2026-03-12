@@ -167,6 +167,8 @@ public class ProductServiceImpl implements ProductService {
         productDTO.setCardImageUrls(product.getCardImageURLs());
         productDTO.setDetailImageUrls(product.getDetailImageURLs());
         productDTO.setAdditionalInformation(product.getAdditionalInformation());
+        productDTO.setStockQuantity(product.getStockQuantity());
+
 
         return productDTO;
     }
@@ -181,6 +183,7 @@ public class ProductServiceImpl implements ProductService {
         product.setProductDescription(productDTO.getProductDescription());
         product.setCategoryId(productDTO.getCategoryId());
         product.setAdditionalInformation(productDTO.getAdditionalInformation());
+        product.setStockQuantity(productDTO.getStockQuantity());
 
         // Log card images reception
         if (productDTO.getCardImages() != null) {
