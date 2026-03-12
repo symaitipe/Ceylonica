@@ -3,22 +3,17 @@ package com.ceylonica.order.model.DTOs;
 import com.ceylonica.order.model.OrderItem;
 import com.ceylonica.order.model.ShippingAddress;
 
-
+import java.math.BigDecimal;
 import java.util.List;
 
-
 public class CreateOrderRequest {
+
     private String userId;
     private String customerName;
     private List<OrderItem> items;
-
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
+    private ShippingAddress shippingAddress;
+    private String paymentMethod;
+    private BigDecimal totalAmount;
 
     public String getUserId() {
         return userId;
@@ -26,6 +21,14 @@ public class CreateOrderRequest {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
     public List<OrderItem> getItems() {
@@ -52,6 +55,11 @@ public class CreateOrderRequest {
         this.paymentMethod = paymentMethod;
     }
 
-    private ShippingAddress shippingAddress;
-    private String paymentMethod;
+    public BigDecimal getTotalAmount() {
+        return totalAmount;
+    }
+
+    public void setTotalAmount(BigDecimal totalAmount) {
+        this.totalAmount = totalAmount;
+    }
 }

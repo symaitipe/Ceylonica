@@ -1,7 +1,7 @@
 package com.ceylonica.cart.service;
 
 import com.ceylonica.cart.entity.Cart;
-import com.ceylonica.cart.entity.CartItem;
+import com.ceylonica.cart.DTO.CartItem;
 
 public interface CartService {
 
