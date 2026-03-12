@@ -1,5 +1,6 @@
 package com.ceylonica.cart.entity;
 
+import com.ceylonica.cart.DTO.CartItem;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 

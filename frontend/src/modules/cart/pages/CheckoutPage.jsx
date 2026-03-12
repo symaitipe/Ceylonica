@@ -1,23 +1,24 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useCart } from '../services/cart.context';
-import { createOrder } from '../../orders/services/order.service';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCart } from "../services/cart.context";
+import { createOrder } from "../../orders/services/order.service";
 
 const Checkout = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phone: '',
-    address: '',
-    city: '',
-    postalCode: '',
-    paymentMethod: 'card'
+    fullName: "",
+    email: "",
+    phone: "",
+    address: "",
+    city: "",
+    postalCode: "",
+    paymentMethod: "card",
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -26,31 +27,31 @@ const Checkout = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const orderData = {
-        items: cartItems.map(item => ({
-          productId: item.id,
+        items: cartItems.map((item) => ({
+          productId: item.productId,
           quantity: item.quantity,
-          price: item.price
+          price: item.price,
         })),
         shippingAddress: {
           fullName: formData.fullName,
           address: formData.address,
           city: formData.city,
           postalCode: formData.postalCode,
-          phone: formData.phone
+          phone: formData.phone,
         },
         paymentMethod: formData.paymentMethod,
-        totalAmount: totalPrice
+        totalAmount: totalPrice,
       };
 
       await createOrder(orderData);
       clearCart();
-      navigate('/orders');
+      navigate("/orders");
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to place order');
+      setError(err.response?.data?.message || "Failed to place order");
     } finally {
       setLoading(false);
     }
@@ -147,7 +148,7 @@ const Checkout = () => {
                 type="radio"
                 name="paymentMethod"
                 value="card"
-                checked={formData.paymentMethod === 'card'}
+                checked={formData.paymentMethod === "card"}
                 onChange={handleChange}
               />
               Credit/Debit Card
@@ -158,7 +159,7 @@ const Checkout = () => {
                 type="radio"
                 name="paymentMethod"
                 value="cod"
-                checked={formData.paymentMethod === 'cod'}
+                checked={formData.paymentMethod === "cod"}
                 onChange={handleChange}
               />
               Cash on Delivery
@@ -166,15 +167,17 @@ const Checkout = () => {
           </div>
 
           <button type="submit" disabled={loading}>
-            {loading ? 'Placing Order...' : 'Place Order'}
+            {loading ? "Placing Order..." : "Place Order"}
           </button>
         </form>
 
         <div className="order-summary">
           <h3>Order Summary</h3>
-          {cartItems.map(item => (
+          {cartItems.map((item) => (
             <div key={item.id} className="summary-item">
-              <span>{item.name} x {item.quantity}</span>
+              <span>
+                {item.name} x {item.quantity}
+              </span>
               <span>Rs. {(item.price * item.quantity).toFixed(2)}</span>
             </div>
           ))}

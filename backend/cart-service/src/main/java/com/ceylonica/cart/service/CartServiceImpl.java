@@ -1,7 +1,7 @@
 package com.ceylonica.cart.service;
 
 import com.ceylonica.cart.entity.Cart;
-import com.ceylonica.cart.entity.CartItem;
+import com.ceylonica.cart.DTO.CartItem;
 import com.ceylonica.cart.repository.CartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

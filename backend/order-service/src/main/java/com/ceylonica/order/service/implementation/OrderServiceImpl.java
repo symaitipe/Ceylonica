@@ -18,53 +18,43 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
-
     @Override
     public Order createOrder(CreateOrderRequest request) {
-        // 1. Calculate the total (Your logic is already solid here)
+
+        // Always calculate total on the backend — never trust frontend values
         BigDecimal total = request.getItems().stream()
                 .map(i -> i.getPrice().multiply(BigDecimal.valueOf(i.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
-        // 2. Create a new Order instance using the default constructor
         Order order = new Order();
-
-        // 3. Manually map fields from the Request to the Entity
         order.setUserId(request.getUserId());
         order.setCustomerName(request.getCustomerName());
         order.setItems(request.getItems());
         order.setShippingAddress(request.getShippingAddress());
         order.setPaymentMethod(request.getPaymentMethod());
-
-        // 4. Set internal/calculated fields
         order.setStatus(OrderStatus.PENDING);
         order.setTotalAmount(total);
         order.setCreatedAt(LocalDateTime.now());
         order.setUpdatedAt(LocalDateTime.now());
 
-        // 5. Save and return
         return orderRepository.save(order);
     }
-
 
     @Override
     public List<Order> getOrdersByUser(String userId) {
         return orderRepository.findByUserId(userId);
     }
 
-
     @Override
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
-
 
     @Override
     public Order getOrderById(String id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }
-
 
     @Override
     public Order updateOrderStatus(String id, OrderStatus status) {
@@ -73,7 +63,6 @@ public class OrderServiceImpl implements OrderService {
         order.setUpdatedAt(LocalDateTime.now());
         return orderRepository.save(order);
     }
-
 
     @Override
     public void cancelOrder(String id) {

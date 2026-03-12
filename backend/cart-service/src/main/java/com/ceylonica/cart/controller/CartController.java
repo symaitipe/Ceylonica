@@ -1,7 +1,7 @@
 package com.ceylonica.cart.controller;
 
 import com.ceylonica.cart.entity.Cart;
-import com.ceylonica.cart.entity.CartItem;
+import com.ceylonica.cart.DTO.CartItem;
 import com.ceylonica.cart.service.CartService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
