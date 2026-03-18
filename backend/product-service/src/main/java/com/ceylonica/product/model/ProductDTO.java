@@ -26,7 +26,7 @@ public class ProductDTO {
     public ProductDTO(String productName, String productDescription, BigDecimal productPrice, Integer categoryId,
             List<MultipartFile> cardImages, List<MultipartFile> detailImages, Map<String, Object> additionalInformation,
             LocalDateTime createdAt,
-            LocalDateTime updatedAt) {
+            LocalDateTime updatedAt, Integer stockQuantity) {
         this.productName = productName;
         this.productDescription = productDescription;
         this.productPrice = productPrice;
@@ -36,6 +36,7 @@ public class ProductDTO {
         this.additionalInformation = additionalInformation;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+        this.stockQuantity = stockQuantity;
     }
 
     public ProductDTO() {

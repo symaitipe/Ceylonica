@@ -5,7 +5,6 @@ const PRODUCT_API = `${API_BASE_URL}/products`;
 
 export const getAllProducts = async (params) => {
   const response = await axios.get(`${PRODUCT_API}/productlist`, { params });
-  console.log("API response:", response.data); // Add this
   return response.data;
 };
 

@@ -1,11 +1,53 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../services/cart.context";
+import { getProductById } from "../../products/services/product.service";
+import "./CartPage.css";
 
 const Cart = () => {
   const { cartItems, updateQuantity, removeFromCart, clearCart, totalPrice } =
     useCart();
   const navigate = useNavigate();
+  const [stockLimits, setStockLimits] = useState({});
+  const [notification, setNotification] = useState("");
+
+  useEffect(() => {
+    const fetchStockLimits = async () => {
+      const limits = {};
+      await Promise.all(
+        cartItems.map(async (item) => {
+          try {
+            const product = await getProductById(item.productId);
+            limits[item.productId] = product.stockQuantity || 0;
+          } catch (error) {
+            console.error("Failed to fetch stock for:", item.productId);
+            limits[item.productId] = item.quantity;
+          }
+        }),
+      );
+      setStockLimits(limits);
+    };
+
+    if (cartItems.length > 0) {
+      fetchStockLimits();
+    }
+  }, [cartItems.length]);
+
+  const showNotification = (message) => {
+    setNotification(message);
+    setTimeout(() => setNotification(""), 3000);
+  };
+
+  const handleIncrease = (item) => {
+    const maxStock = stockLimits[item.productId];
+    if (maxStock !== undefined && item.quantity >= maxStock) {
+      showNotification(
+        `Sorry, only ${maxStock} units of ${item.name} are available.`,
+      );
+      return;
+    }
+    updateQuantity(item.productId, item.quantity + 1);
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -22,6 +64,9 @@ const Cart = () => {
   return (
     <div className="cart-page">
       <h2>Shopping Cart</h2>
+
+      {notification && <div className="stock-toast">{notification}</div>}
+
       <div className="cart-items">
         {cartItems.map((item) => (
           <div key={item.productId} className="cart-item">
@@ -39,13 +84,7 @@ const Cart = () => {
                 -
               </button>
               <span>{item.quantity}</span>
-              <button
-                onClick={() =>
-                  updateQuantity(item.productId, item.quantity + 1)
-                }
-              >
-                +
-              </button>
+              <button onClick={() => handleIncrease(item)}>+</button>
             </div>
             <p className="item-total">
               Rs. {(item.price * item.quantity).toFixed(2)}
@@ -59,6 +98,7 @@ const Cart = () => {
           </div>
         ))}
       </div>
+
       <div className="cart-summary">
         <div className="summary-row">
           <span>Subtotal:</span>

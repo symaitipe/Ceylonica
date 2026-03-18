@@ -1,13 +1,28 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../cart/services/cart.context";
+import Notification from "../../../core/components/common/Notification";
 import "./productCard.css";
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
+  const notifRef = useRef();
 
   const handleAddToCart = (e) => {
     e.preventDefault();
+
+    const existingItem = cartItems.find(
+      (item) => item.productId === product.productId,
+    );
+
+    if (existingItem && existingItem.quantity >= product.stockQuantity) {
+      notifRef.current.show(
+        `Sorry, only ${product.stockQuantity} units available.`,
+        "error",
+      );
+      return;
+    }
+
     addToCart({
       productId: product.productId,
       name: product.productName,
@@ -15,10 +30,14 @@ const ProductCard = ({ product }) => {
       price: product.productPrice,
       quantity: 1,
     });
+
+    notifRef.current.show("Added to cart!", "success");
   };
 
   return (
     <div className="product-card">
+      <Notification ref={notifRef} />
+
       <Link to={`/product/${product.productId}`}>
         <div className="product-image">
           <img src={product.cardImageUrls?.[0]} alt={product.productName} />
@@ -33,8 +52,12 @@ const ProductCard = ({ product }) => {
         </div>
       </Link>
 
-      <button className="add-to-cart-btn" onClick={handleAddToCart}>
-        Add to Cart
+      <button
+        className="add-to-cart-btn"
+        onClick={handleAddToCart}
+        disabled={product.stockQuantity < 1}
+      >
+        {product.stockQuantity < 1 ? "Out of Stock" : "Add to Cart"}
       </button>
     </div>
   );
