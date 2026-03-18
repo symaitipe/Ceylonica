@@ -7,19 +7,21 @@ import com.ceylonica.payment.dto.PaymentResponse;
 import com.ceylonica.payment.service.PaymentService;
 import com.stripe.exception.StripeException;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/payments")
-@RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentService paymentService;
+    @Autowired
+    private PaymentService paymentService;
 
     // Create PaymentIntent — returns clientSecret to frontend
     @PostMapping
@@ -37,6 +39,17 @@ public class PaymentController {
             @PathVariable String paymentIntentId) throws StripeException {
 
         PaymentResponse response = paymentService.confirmPayment(paymentIntentId);
+        return ResponseEntity.ok(ApiResponse.success(response));
+    }
+
+    // Link payment to order after order is created
+    @PatchMapping("/link-order/{paymentIntentId}")
+    public ResponseEntity<ApiResponse<PaymentResponse>> linkOrder(
+            @PathVariable String paymentIntentId,
+            @RequestBody Map<String, String> body) {
+
+        String orderId = body.get("orderId");
+        PaymentResponse response = paymentService.linkOrderToPayment(paymentIntentId, orderId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 

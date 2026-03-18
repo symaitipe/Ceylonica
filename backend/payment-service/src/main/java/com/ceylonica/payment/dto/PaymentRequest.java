@@ -1,14 +1,13 @@
 package com.ceylonica.payment.dto;
 
+
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
 public class PaymentRequest {
 
-    @NotBlank(message = "Order ID is required")
+
     private String orderId;
 
     @NotNull(message = "Amount is required")
@@ -17,4 +16,34 @@ public class PaymentRequest {
 
     @NotBlank(message = "Currency is required")
     private String currency;
+
+    // Default constructor (important for frameworks like Spring)
+    public PaymentRequest() {
+    }
+
+    // Getters
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public Long getAmount() {
+        return amount;
+    }
+
+    public String getCurrency() {
+        return currency;
+    }
+
+    // Setters
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+
+    public void setAmount(Long amount) {
+        this.amount = amount;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
 }
