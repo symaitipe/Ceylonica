@@ -1,13 +1,13 @@
-import React from 'react';
-import { Routes, Route } from 'react-router-dom';
-import Home from './modules/products/pages/HomePage';
-import Login from './modules/auth/pages/LoginPage';
-import Register from './modules/auth/pages/RegisterPage';
-import ProductDetails from './modules/products/pages/ProductDetailsPage';
-import Cart from './modules/cart/pages/CartPage';
-import Checkout from './modules/cart/pages/CheckoutPage';
-import Orders from './modules/orders/pages/OrdersPage';
-import AdminDashboard from './modules/admin/pages/AdminDashboardPage';
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "./modules/products/pages/HomePage";
+import Login from "./modules/auth/pages/LoginPage";
+import Register from "./modules/auth/pages/RegisterPage";
+import ProductDetails from "./modules/products/pages/ProductDetailsPage";
+import Cart from "./modules/cart/pages/CartPage";
+import Checkout from "./modules/payment/pages/CheckoutPage";
+import Orders from "./modules/orders/pages/OrdersPage";
+import AdminDashboard from "./modules/admin/pages/AdminDashboardPage";
 
 const AppRoutes = () => {
   return (

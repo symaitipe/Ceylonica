@@ -1,12 +1,30 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useCart } from "../services/cart.context";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
+import { useCart } from "../../cart/services/cart.context";
 import { createOrder } from "../../orders/services/order.service";
+import {
+  createPayment,
+  confirmPayment,
+  linkPaymentToOrder,
+} from "../../payment/services/Payment.service";
+import "./CheckoutPage.css";
 
-const Checkout = () => {
+const stripePromise = loadStripe(
+  "pk_test_51RNbJuFwH7tFNtyLAZnM3Xsx6o55cJYpCc4zWfuE8BWIfTWyusxrapdsYIJKUZm920l6G4k0WnZgn5jinVPjXKMm00XCK6cyFZ",
+);
+
+const CheckoutForm = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
-
   const navigate = useNavigate();
+  const stripe = useStripe();
+  const elements = useElements();
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -49,9 +67,53 @@ const Checkout = () => {
         totalAmount: totalPrice,
       };
 
-      await createOrder(orderData);
-      clearCart();
-      navigate("/orders");
+      // ── COD flow ──────────────────────────────────────────────────
+      if (formData.paymentMethod === "cod") {
+        await createOrder(orderData);
+        clearCart();
+        navigate("/orders");
+        return;
+      }
+
+      // ── Card flow ─────────────────────────────────────────────────
+
+      // Step 1 — Create PaymentIntent (no orderId yet)
+      const amountInCents = Math.round(totalPrice * 100);
+      const paymentData = await createPayment(amountInCents);
+      const clientSecret = paymentData.data.clientSecret;
+      const paymentIntentId = paymentData.data.stripePaymentIntentId;
+
+      // Step 2 — Confirm card payment with Stripe
+      const { error: stripeError, paymentIntent } =
+        await stripe.confirmCardPayment(clientSecret, {
+          payment_method: {
+            card: elements.getElement(CardElement),
+            billing_details: {
+              name: formData.fullName,
+              email: formData.email,
+              phone: formData.phone,
+            },
+          },
+        });
+
+      if (stripeError) {
+        setError(stripeError.message);
+        return;
+      }
+
+      // Step 3 — Payment succeeded → create order
+      if (paymentIntent.status === "succeeded") {
+        const order = await createOrder(orderData);
+
+        // Step 4 — Link payment to order
+        await linkPaymentToOrder(paymentIntentId, order.id);
+
+        // Step 5 — Confirm on backend
+        await confirmPayment(paymentIntentId);
+
+        clearCart();
+        navigate("/orders");
+      }
     } catch (err) {
       setError(err.response?.data?.message || "Failed to place order");
     } finally {
@@ -128,7 +190,6 @@ const Checkout = () => {
                 required
               />
             </div>
-
             <div className="form-group">
               <label htmlFor="postalCode">Postal Code</label>
               <input
@@ -155,7 +216,6 @@ const Checkout = () => {
               />
               Credit/Debit Card
             </label>
-
             <label>
               <input
                 type="radio"
@@ -168,8 +228,26 @@ const Checkout = () => {
             </label>
           </div>
 
-          <button type="submit" disabled={loading}>
-            {loading ? "Placing Order..." : "Place Order"}
+          {formData.paymentMethod === "card" && (
+            <div className="card-element-container">
+              <label>Card Details</label>
+              <CardElement
+                options={{
+                  style: {
+                    base: {
+                      fontSize: "16px",
+                      color: "#424770",
+                      "::placeholder": { color: "#aab7c4" },
+                    },
+                    invalid: { color: "#9e2146" },
+                  },
+                }}
+              />
+            </div>
+          )}
+
+          <button type="submit" disabled={loading || !stripe}>
+            {loading ? "Processing..." : "Place Order"}
           </button>
         </form>
 
@@ -190,6 +268,14 @@ const Checkout = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const Checkout = () => {
+  return (
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
   );
 };
 

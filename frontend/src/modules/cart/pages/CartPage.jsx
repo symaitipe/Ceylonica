@@ -33,11 +33,6 @@ const Cart = () => {
     }
   }, [cartItems.length]);
 
-  const showNotification = (message) => {
-    setNotification(message);
-    setTimeout(() => setNotification(""), 3000);
-  };
-
   const handleIncrease = (item) => {
     const maxStock = stockLimits[item.productId];
     if (maxStock !== undefined && item.quantity >= maxStock) {
