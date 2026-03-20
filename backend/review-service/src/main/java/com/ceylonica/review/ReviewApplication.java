@@ -3,9 +3,11 @@ package com.ceylonica.review;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
-@EnableDiscoveryClient // This lets other services find your review service
+@EnableDiscoveryClient
+@EnableFeignClients
 public class ReviewApplication {
 
 	public static void main(String[] args) {

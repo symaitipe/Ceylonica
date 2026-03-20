@@ -23,6 +23,9 @@ public class ProductDTO {
     private LocalDateTime updatedAt;
     private Integer stockQuantity;
 
+    private double averageRating;
+    private int totalReviews;
+
     public ProductDTO(String productName, String productDescription, BigDecimal productPrice, Integer categoryId,
             List<MultipartFile> cardImages, List<MultipartFile> detailImages, Map<String, Object> additionalInformation,
             LocalDateTime createdAt,
@@ -141,5 +144,12 @@ public class ProductDTO {
     public Integer getStockQuantity() { return stockQuantity; }
 
     public void setStockQuantity(Integer stockQuantity) { this.stockQuantity = stockQuantity; }
+
+
+    public double getAverageRating() { return averageRating; }
+    public void setAverageRating(double averageRating) { this.averageRating = averageRating; }
+
+    public int getTotalReviews() { return totalReviews; }
+    public void setTotalReviews(int totalReviews) { this.totalReviews = totalReviews; }
 
 }

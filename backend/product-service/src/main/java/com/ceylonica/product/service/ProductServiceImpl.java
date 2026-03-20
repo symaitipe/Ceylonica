@@ -168,7 +168,8 @@ public class ProductServiceImpl implements ProductService {
         productDTO.setDetailImageUrls(product.getDetailImageURLs());
         productDTO.setAdditionalInformation(product.getAdditionalInformation());
         productDTO.setStockQuantity(product.getStockQuantity());
-
+        productDTO.setAverageRating(product.getAverageRating());
+        productDTO.setTotalReviews(product.getTotalReviews());
 
         return productDTO;
     }
@@ -275,6 +276,15 @@ public class ProductServiceImpl implements ProductService {
         }
 
         product.setStockQuantity(currentStock - quantity);
+        productRepository.save(product);
+    }
+
+    @Override
+    public void updateRating(String productId, double averageRating, int totalReviews) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+        product.setAverageRating(averageRating);
+        product.setTotalReviews(totalReviews);
         productRepository.save(product);
     }
 }

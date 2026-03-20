@@ -25,6 +25,9 @@ public class Product {
     private Map<String, Object> additionalInformation;
     private Integer stockQuantity;
 
+    private double averageRating;
+    private int totalReviews;
+
     @CreatedDate
     private Instant createdAt;
 
@@ -135,5 +138,21 @@ public class Product {
 
     public void setStockQuantity(Integer stockQuantity){
         this.stockQuantity = stockQuantity;
+    }
+
+    public int getTotalReviews() {
+        return totalReviews;
+    }
+
+    public void setTotalReviews(int totalReviews) {
+        this.totalReviews = totalReviews;
+    }
+
+    public double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(double averageRating) {
+        this.averageRating = averageRating;
     }
 }

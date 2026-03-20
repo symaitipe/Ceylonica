@@ -1,79 +1,68 @@
 package com.ceylonica.review.controller;
 
-import com.ceylonica.review.model.Review;
-import com.ceylonica.review.repository.ReviewRepository;
+import com.ceylonica.review.dto.ReviewRequest;
+import com.ceylonica.review.dto.ReviewResponse;
+import com.ceylonica.review.dto.ReviewSummary;
+import com.ceylonica.review.service.ReviewService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("/api/reviews")
 public class ReviewController {
 
     @Autowired
-    private ReviewRepository reviewRepository;
+    private ReviewService reviewService;
 
-    // 1. SUBMIT REVIEW (With "One review per user" check)
+    // Add review
     @PostMapping
-    public ResponseEntity<?> createReview(@RequestBody Review review, @RequestHeader(value = "X-User-Id", required = false) String headerUserId) {
-        // If your leader sends userId in header, use it; otherwise use the body
-        String userId = (headerUserId != null) ? headerUserId : review.getUserId();
-        review.setUserId(userId);
-
-        // Business Rule: One review per product per user
-        Optional<Review> existing = reviewRepository.findByProductIdAndUserId(review.getProductId(), userId);
-        if (existing.isPresent()) {
-            return ResponseEntity.badRequest().body("Error: You have already reviewed this product.");
-        }
-
-        return ResponseEntity.ok(reviewRepository.save(review));
+    public ResponseEntity<ReviewResponse> addReview(@RequestBody ReviewRequest request,
+                                                    HttpServletRequest httpRequest) {
+        String userId = httpRequest.getHeader("X-User-Id");
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(reviewService.addReview(userId, request));
     }
 
-    // 2. VIEW REVIEWS (With Sorting & Optional Filtering)
-    @GetMapping("/product/{productId}")
-    public List<Review> getReviews(@PathVariable String productId, @RequestParam(required = false) Integer rating) {
-        if (rating != null) {
-            return reviewRepository.findByProductIdAndRating(productId, rating);
-        }
-        return reviewRepository.findByProductIdOrderByCreatedAtDesc(productId);
+    // Get all reviews for a product
+    @GetMapping("/{productId}")
+    public ResponseEntity<List<ReviewResponse>> getReviews(@PathVariable String productId) {
+        return ResponseEntity.ok(reviewService.getReviewsByProduct(productId));
     }
 
-    // 3. RATING ANALYTICS (Average + Total + Distribution)
-    @GetMapping("/product/{productId}/summary")
-    public Map<String, Object> getRatingSummary(@PathVariable String productId) {
-        List<Review> reviews = reviewRepository.findByProductId(productId);
-
-        double average = reviews.stream().mapToInt(Review::getRating).average().orElse(0.0);
-
-        // Rating Distribution (Counts of 1, 2, 3, 4, 5 stars)
-        Map<Integer, Long> distribution = reviews.stream()
-                .collect(Collectors.groupingBy(Review::getRating, Collectors.counting()));
-
-        Map<String, Object> summary = new HashMap<>();
-        summary.put("productId", productId);
-        summary.put("averageRating", Math.round(average * 10.0) / 10.0); // Round to 1 decimal
-        summary.put("totalReviews", reviews.size());
-        summary.put("ratingDistribution", distribution);
-
-        return summary;
+    // Get review summary (average rating + count)
+    @GetMapping("/{productId}/summary")
+    public ResponseEntity<ReviewSummary> getSummary(@PathVariable String productId) {
+        return ResponseEntity.ok(reviewService.getReviewSummary(productId));
     }
 
-    // 4. EDIT/DELETE OWN REVIEWS
-    @PutMapping("/{id}")
-    public ResponseEntity<Review> updateReview(@PathVariable String id, @RequestBody Review reviewDetails) {
-        return reviewRepository.findById(id).map(review -> {
-            review.setRating(reviewDetails.getRating());
-            review.setComment(reviewDetails.getComment());
-            return ResponseEntity.ok(reviewRepository.save(review));
-        }).orElse(ResponseEntity.notFound().build());
+    // Edit own review
+    @PutMapping("/{reviewId}")
+    public ResponseEntity<ReviewResponse> editReview(@PathVariable String reviewId,
+                                                     @RequestBody ReviewRequest request,
+                                                     HttpServletRequest httpRequest) {
+        String userId = httpRequest.getHeader("X-User-Id");
+        return ResponseEntity.ok(reviewService.editReview(userId, reviewId, request));
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteReview(@PathVariable String id) {
-        reviewRepository.deleteById(id);
-        return ResponseEntity.ok().build();
+    // Delete own review
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<?> deleteReview(@PathVariable String reviewId,
+                                          HttpServletRequest httpRequest) {
+        String userId = httpRequest.getHeader("X-User-Id");
+        reviewService.deleteReview(userId, reviewId);
+        return ResponseEntity.ok(Map.of("message", "Review deleted successfully"));
+    }
+
+    // Admin: delete any review
+    @DeleteMapping("/admin/{reviewId}")
+    public ResponseEntity<?> adminDeleteReview(@PathVariable String reviewId) {
+        reviewService.adminDeleteReview(reviewId);
+        return ResponseEntity.ok(Map.of("message", "Review deleted successfully"));
     }
 }
