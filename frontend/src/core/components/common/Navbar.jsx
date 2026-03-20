@@ -1,7 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useAuth } from '../../../modules/auth/services/auth.context';
-import { useCart } from '../../../modules/cart/services/cart.context';
+import React from "react";
+import { Link } from "react-router-dom";
+import { useAuth } from "../../../modules/auth/services/auth.context";
+import { useCart } from "../../../modules/cart/services/cart.context";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
@@ -15,14 +15,13 @@ const Navbar = () => {
 
       <div className="navbar-menu">
         <Link to="/">Home</Link>
-        <Link to="/cart">
-          Cart ({cartItems?.length || 0})
-        </Link>
+        <Link to="/cart">Cart ({cartItems?.length || 0})</Link>
 
         {user ? (
           <>
             <Link to="/orders">Orders</Link>
-            {user.role === 'ADMIN' && <Link to="/admin">Dashboard</Link>}
+            <Link to="/profile">Profile</Link>
+            {user.role === "ADMIN" && <Link to="/admin">Dashboard</Link>}
             <button onClick={logout}>Logout</button>
           </>
         ) : (
