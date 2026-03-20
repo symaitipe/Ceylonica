@@ -1,14 +1,8 @@
-package com.ceylonica.review.model;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+package com.ceylonica.review.dto;
 
 import java.time.LocalDateTime;
 
-@Document(collection = "reviews")
-public class Review {
-
-    @Id
+public class ReviewResponse {
     private String reviewId;
     private String productId;
     private String userId;
@@ -17,7 +11,7 @@ public class Review {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public Review() {}
+    public ReviewResponse() {}
 
     public String getReviewId() { return reviewId; }
     public void setReviewId(String reviewId) { this.reviewId = reviewId; }

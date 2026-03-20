@@ -30,4 +30,5 @@ public interface ProductService {
     boolean checkStock(String productId, int requiredQuantity);
 
     void reduceStock(String productId, int quantity);
+    void updateRating(String productId, double averageRating, int totalReviews);
 }

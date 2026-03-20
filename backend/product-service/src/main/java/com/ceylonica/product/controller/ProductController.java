@@ -60,4 +60,14 @@ public class ProductController {
         productService.reduceStock(productId, quantity);
         return ResponseEntity.ok().build();
     }
+
+    // ── Rating endpoint (called by review service) ──
+
+    @PutMapping("/{productId}/rating")
+    public ResponseEntity<Void> updateRating(@PathVariable String productId,
+                                             @RequestParam double averageRating,
+                                             @RequestParam int totalReviews) {
+        productService.updateRating(productId, averageRating, totalReviews);
+        return ResponseEntity.ok().build();
+    }
 }
