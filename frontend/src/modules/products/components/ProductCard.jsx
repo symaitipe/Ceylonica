@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { Link } from "react-router-dom";
 import { useCart } from "../../cart/services/cart.context";
 import Notification from "../../../core/components/common/Notification";
+import StarRating from "../../../core/components/common/StarRating";
 import "./productCard.css";
 
 const ProductCard = ({ product }) => {
@@ -48,6 +49,11 @@ const ProductCard = ({ product }) => {
           <p className="product-price">
             Rs. {product.productPrice?.toFixed(2)}
           </p>
+          <StarRating
+            rating={product.averageRating || 0}
+            totalReviews={product.totalReviews || 0}
+            size="small"
+          />
           <p className="product-description">{product.productDescription}</p>
         </div>
       </Link>
