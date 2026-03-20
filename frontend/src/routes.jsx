@@ -8,6 +8,7 @@ import Cart from "./modules/cart/pages/CartPage";
 import Checkout from "./modules/payment/pages/CheckoutPage";
 import Orders from "./modules/orders/pages/OrdersPage";
 import AdminDashboard from "./modules/admin/pages/AdminDashboardPage";
+import ProfilePage from "./modules/users/pages/ProfilePage";
 
 const AppRoutes = () => {
   return (
@@ -20,6 +21,7 @@ const AppRoutes = () => {
       <Route path="/checkout" element={<Checkout />} />
       <Route path="/orders" element={<Orders />} />
       <Route path="/admin" element={<AdminDashboard />} />
+      <Route path="/profile" element={<ProfilePage />} />
     </Routes>
   );
 };

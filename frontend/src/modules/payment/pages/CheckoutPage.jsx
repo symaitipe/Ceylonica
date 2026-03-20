@@ -16,9 +16,7 @@ import {
 } from "../../payment/services/Payment.service";
 import "./CheckoutPage.css";
 
-const stripePromise = loadStripe(
-  "pk_test_51RNbJuFwH7tFNtyLAZnM3Xsx6o55cJYpCc4zWfuE8BWIfTWyusxrapdsYIJKUZm920l6G4k0WnZgn5jinVPjXKMm00XCK6cyFZ",
-);
+const stripePromise = loadStripe("");
 
 const CheckoutForm = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
