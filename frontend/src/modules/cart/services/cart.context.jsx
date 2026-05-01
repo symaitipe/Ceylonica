@@ -71,6 +71,7 @@ export const CartProvider = ({ children }) => {
       }
     } catch (error) {
       console.error("Failed to add to cart:", error);
+      throw error;
     }
   };
   const updateQuantity = async (itemId, quantity) => {
