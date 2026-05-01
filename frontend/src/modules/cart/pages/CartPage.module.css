@@ -1,0 +1,121 @@
+@reference "../../../index.css";
+
+.page {
+  @apply max-w-4xl mx-auto px-6 py-12 font-body;
+}
+
+.emptyPage {
+  @apply min-h-[60vh] flex flex-col items-center justify-center gap-4 text-center px-6;
+}
+
+.emptyTitle {
+  @apply font-display text-3xl font-bold text-[#1A1209];
+}
+
+.emptyText {
+  @apply text-[#1A1209]/50 text-sm;
+}
+
+.continueBtn {
+  @apply mt-2 bg-[#1A1209] text-[#FAF6EE] px-8 py-3 rounded-xl font-semibold
+         text-sm uppercase tracking-wide transition-all duration-200;
+}
+
+.continueBtn:hover {
+  @apply bg-[#C9A84C] text-[#1A1209];
+}
+
+.pageTitle {
+  @apply font-display text-3xl font-bold text-[#1A1209] mb-8;
+}
+
+.toast {
+  @apply bg-amber-50 border border-amber-200 text-amber-800 text-sm px-4 py-3
+         rounded-xl mb-6;
+}
+
+.itemsList {
+  @apply flex flex-col gap-4 mb-8;
+}
+
+.item {
+  @apply bg-white rounded-2xl border border-[#1A1209]/5 shadow-sm
+         p-5 flex items-center gap-5;
+}
+
+.itemImage {
+  @apply w-20 h-20 rounded-xl object-cover bg-[#FAF6EE] shrink-0;
+}
+
+.itemDetails {
+  @apply flex-1 min-w-0;
+}
+
+.itemName {
+  @apply font-display font-semibold text-[#1A1209] text-base leading-snug truncate;
+}
+
+.itemPrice {
+  @apply text-[#C9A84C] font-bold text-sm mt-1;
+}
+
+.quantityControls {
+  @apply flex items-center border border-[#1A1209]/15 rounded-xl overflow-hidden shrink-0;
+}
+
+.qtyBtn {
+  @apply px-3 py-2 text-[#1A1209] hover:bg-[#1A1209]/5 transition-colors
+         font-medium text-base;
+}
+
+.qtyValue {
+  @apply px-4 py-2 font-semibold text-[#1A1209] border-x border-[#1A1209]/15
+         min-w-[2.5rem] text-center text-sm;
+}
+
+.itemTotal {
+  @apply font-bold text-[#1A1209] text-sm shrink-0 min-w-[5rem] text-right;
+}
+
+.removeBtn {
+  @apply text-xs font-semibold text-red-400 hover:text-red-600
+         transition-colors shrink-0;
+}
+
+.summary {
+  @apply bg-white rounded-2xl border border-[#1A1209]/5 shadow-sm p-6;
+}
+
+.summaryRow {
+  @apply flex items-center justify-between pb-5 mb-5 border-b border-[#1A1209]/10;
+}
+
+.summaryLabel {
+  @apply text-[#1A1209]/60 font-medium;
+}
+
+.summaryValue {
+  @apply font-display text-2xl font-bold text-[#1A1209];
+}
+
+.actions {
+  @apply flex gap-3;
+}
+
+.clearBtn {
+  @apply flex-1 py-3 rounded-xl font-semibold text-sm uppercase tracking-wide
+         border border-[#1A1209]/20 text-[#1A1209]/60 transition-all duration-200;
+}
+
+.clearBtn:hover {
+  @apply border-red-300 text-red-500;
+}
+
+.checkoutBtn {
+  @apply flex-1 py-3 rounded-xl font-semibold text-sm uppercase tracking-wide
+         bg-[#1A1209] text-[#FAF6EE] transition-all duration-200;
+}
+
+.checkoutBtn:hover {
+  @apply bg-[#C9A84C] text-[#1A1209];
+}

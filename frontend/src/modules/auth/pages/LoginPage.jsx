@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../services/auth.context';
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../services/auth.context";
+import styles from "./Login.module.css";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const { login } = useAuth();
@@ -13,62 +14,96 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setError("");
     setLoading(true);
-
     try {
       const response = await login({ email, password });
-
-      if (response.user?.role === 'ADMIN') {
-        navigate('/admin');
-      } else {
-        navigate('/');
-      }
+      if (response.user?.role === "ADMIN") navigate("/admin");
+      else navigate("/");
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || "Login failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="auth-page">
-      <div className="auth-container">
-        <h2>Login</h2>
+    <div className={styles.page}>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className={styles.bgGlow1} />
+        <div className={styles.bgGlow2} />
+      </div>
 
-        {error && <div className="error-message">{error}</div>}
+      <div className={styles.wrapper}>
+        <div className={styles.logoSection}>
+          <Link
+            to="/"
+            className={styles.logoText}
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Ceylonica
+          </Link>
+          <div className={styles.logoDivider} />
+          <p className={styles.logoSubtext}>Welcome back</p>
+        </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
+        <div className={styles.card}>
+          <h2
+            className={styles.title}
+            style={{ fontFamily: "'Playfair Display', serif" }}
+          >
+            Sign In
+          </h2>
 
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+          {error && <div className={styles.errorBox}>{error}</div>}
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className={styles.form}>
+            <div className={styles.fieldGroup}>
+              <label htmlFor="email" className={styles.label}>
+                Email
+              </label>
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                required
+                className={styles.input}
+              />
+            </div>
 
-        <p className="auth-link">
-          Don't have an account? <Link to="/register">Register</Link>
-        </p>
+            <div className={styles.fieldGroup}>
+              <label htmlFor="password" className={styles.label}>
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                className={styles.input}
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={styles.submitBtn}
+            >
+              {loading ? "Signing in..." : "Sign In"}
+            </button>
+          </form>
+
+          <p className={styles.footerText}>
+            Don't have an account?{" "}
+            <Link to="/register" className={styles.footerLink}>
+              Register
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   );
