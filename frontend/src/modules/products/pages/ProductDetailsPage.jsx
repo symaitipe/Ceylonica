@@ -56,7 +56,7 @@ const ProductDetails = () => {
     }
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const existingItem = cartItems.find(
       (item) => item.productId === product.productId,
     );
@@ -67,14 +67,29 @@ const ProductDetails = () => {
       );
       return;
     }
-    addToCart({
-      productId: product.productId,
-      name: product.productName,
-      imageUrl: product.cardImageUrls?.[0],
-      price: product.productPrice,
-      quantity,
-    });
-    notifRef.current.show("Added to cart!", "success");
+
+    try {
+      await addToCart({
+        productId: product.productId,
+        name: product.productName,
+        imageUrl: product.cardImageUrls?.[0],
+        price: product.productPrice,
+        quantity,
+      });
+      notifRef.current.show("Added to cart!", "success");
+    } catch (error) {
+      const status = error.response?.status;
+      const message =
+        status === 503
+          ? "Service is currently unavailable. Please try again later."
+          : status === 401
+            ? "Please log in to add items to cart."
+            : status === 400
+              ? "Invalid request. Please try again."
+              : "Failed to add to cart.";
+
+      notifRef.current.show(message, "error");
+    }
   };
 
   const handleSubmitReview = async (e) => {
