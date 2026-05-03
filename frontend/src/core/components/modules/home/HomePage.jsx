@@ -64,7 +64,7 @@ const Home = () => {
       </section>
 
       {/* Decorative divider */}
-      <div className="h-1 bg-gradient-to-r from-[#C9A84C]/0 via-[#C9A84C] to-[#C9A84C]/0" />
+      <div className="h-1 bg-linear-to-r from-[#C9A84C]/0 via-[#C9A84C] to-[#C9A84C]/0" />
 
       {/* Products Section */}
       <section id="products" className="max-w-6xl mx-auto px-6 py-20">

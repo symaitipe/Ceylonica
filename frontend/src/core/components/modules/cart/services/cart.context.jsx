@@ -39,7 +39,7 @@ export const CartProvider = ({ children }) => {
     try {
       setLoading(true);
       const data = await cartApi.getCart();
-      console.log("Full cart response:", JSON.stringify(data));
+
       setCartItems(data.items || []);
     } catch (error) {
       console.error("Failed to fetch cart:", error);

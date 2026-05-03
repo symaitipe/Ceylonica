@@ -1,0 +1,142 @@
+@reference "../../../../../index.css";
+
+.page {
+  @apply max-w-6xl mx-auto px-6 py-12;
+  background-color: #f0ebe1;
+}
+
+.pageTitle {
+  @apply font-display text-3xl font-bold text-[#1A1209] mb-8;
+}
+
+.errorBox {
+  @apply bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl mb-6;
+}
+
+.container {
+  @apply grid grid-cols-1 lg:grid-cols-3 gap-8;
+}
+
+/* ── Form ── */
+.form {
+  @apply lg:col-span-2 bg-white rounded-2xl border border-[#1A1209]/5 shadow-sm p-8 flex flex-col gap-6;
+}
+
+.sectionTitle {
+  @apply font-display text-xl font-bold text-[#1A1209] pb-3 border-b border-[#1A1209]/10;
+}
+
+.fieldGroup {
+  @apply flex flex-col gap-1.5;
+}
+
+.formRow {
+  @apply grid grid-cols-2 gap-4;
+}
+
+.label {
+  @apply text-xs font-semibold text-[#1A1209]/80 uppercase tracking-wide;
+}
+
+.input {
+  @apply border-2 border-[#1A1209]/20 rounded-xl px-4 py-3 text-[#1A1209] text-sm
+         focus:outline-none focus:border-[#C9A84C]
+         transition-colors bg-white;
+  color: #1a1209;
+}
+
+.input::placeholder {
+  color: #9e8e7e;
+}
+
+.textarea {
+  @apply border-2 border-[#1A1209]/20 rounded-xl px-4 py-3 text-[#1A1209] text-sm
+         focus:outline-none focus:border-[#C9A84C]
+         transition-colors bg-white resize-none;
+}
+
+.textarea::placeholder {
+  color: #9e8e7e;
+}
+
+/* ── Payment Options ── */
+.paymentOptions {
+  @apply flex flex-col gap-3;
+}
+
+.paymentOption {
+  @apply flex items-center gap-3 border border-[#1A1209]/15 rounded-xl px-4 py-3.5
+         cursor-pointer transition-colors hover:border-[#C9A84C] has-checked:border-[#C9A84C]
+         has-checked:bg-[#C9A84C]/5;
+}
+
+.paymentOptionText {
+  @apply text-sm font-medium text-[#1A1209];
+}
+
+.radioInput {
+  @apply accent-[#C9A84C] w-4 h-4;
+}
+
+/* ── Card Element ── */
+.cardElementWrapper {
+  @apply flex flex-col gap-1.5;
+}
+
+.cardElement {
+  @apply border-2 border-[#1A1209]/20 rounded-xl px-4 py-3.5 bg-white
+         focus-within:border-[#C9A84C] transition-colors;
+}
+
+/* ── Submit Button ── */
+.submitBtn {
+  @apply mt-2 bg-[#1A1209] text-[#FAF6EE] py-4 rounded-xl font-semibold
+         text-sm uppercase tracking-wide transition-all duration-200
+         disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.submitBtn:hover:not(:disabled) {
+  @apply bg-[#1A1209] text-[#FAF6EE];
+}
+
+/* ── Order Summary ── */
+.summary {
+  @apply lg:col-span-1;
+}
+
+.summaryInner {
+  @apply bg-white rounded-2xl border border-[#1A1209]/5 shadow-sm p-6
+         sticky top-24 flex flex-col gap-4;
+}
+
+.summaryTitle {
+  @apply font-display text-xl font-bold text-[#1A1209] pb-3 border-b border-[#1A1209]/10;
+}
+
+.summaryItem {
+  @apply flex items-center justify-between text-sm text-[#1A1209]/70;
+}
+
+.summaryItemName {
+  @apply flex-1 pr-4;
+}
+
+.summaryItemPrice {
+  @apply font-medium text-[#1A1209] shrink-0;
+}
+
+.summaryDivider {
+  @apply border-t border-[#1A1209]/10 pt-4 mt-2;
+}
+
+.summaryTotal {
+  @apply flex items-center justify-between;
+}
+
+.summaryTotalLabel {
+  @apply font-display text-base font-bold text-[#1A1209];
+}
+
+.summaryTotalValue {
+  @apply font-display text-xl font-bold text-[#C9A84C];
+}

@@ -4,8 +4,6 @@ import { getAuthHeader } from "../../auth/services/auth.utils";
 
 const CART_API = `${API_BASE_URL}/cart`;
 
-console.log("Auth header:", getAuthHeader());
-
 export const getCart = async () => {
   const response = await axios.get(CART_API, {
     headers: getAuthHeader(),
