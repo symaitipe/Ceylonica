@@ -40,9 +40,8 @@ const Footer = () => {
           <div className="w-8 h-0.5 bg-[#C9A84C] mb-1" />
           {[
             ["/", "Home"],
-            ["/products", "Products"],
             ["/about", "About Us"],
-            ["/contact", "Contact"],
+            ["/careers", "Careers"],
           ].map(([href, label]) => (
             <a
               key={href}

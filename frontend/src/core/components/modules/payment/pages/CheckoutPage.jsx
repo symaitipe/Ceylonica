@@ -16,7 +16,10 @@ import {
 } from "../../payment/services/Payment.service";
 import styles from "./CheckoutPage.module.css";
 
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+console.log("Stripe key loaded:", stripeKey); // Debug log
+
+const stripePromise = loadStripe(stripeKey);
 
 const CheckoutForm = () => {
   const { cartItems, totalPrice, clearCart } = useCart();

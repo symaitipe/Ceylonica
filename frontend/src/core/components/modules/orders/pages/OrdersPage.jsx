@@ -56,7 +56,9 @@ const Orders = () => {
             <div key={order.id} className={styles.card}>
               {/* Header */}
               <div className={styles.cardHeader}>
-                <span className={styles.orderId}>Order #{order.id}</span>
+                <span className={styles.orderId}>
+                  Order #{order.id.slice(-8).toUpperCase()}
+                </span>
                 <span className={getStatusClass(order.status)}>
                   {order.status}
                 </span>

@@ -9,6 +9,8 @@ import Checkout from "./core/components/modules/payment/pages/CheckoutPage";
 import Orders from "./core/components/modules/orders/pages/OrdersPage";
 import AdminDashboard from "./core/components/modules/admin/AdminDashboardPage";
 import ProfilePage from "./core/components/modules/users/pages/ProfilePage";
+import AboutPage from "./core/components/modules/aboutUs/AboutPage";
+import CareersPage from "./core/components/modules/careers/CareersPage";
 
 const AppRoutes = () => {
   return (
@@ -22,6 +24,8 @@ const AppRoutes = () => {
       <Route path="/orders" element={<Orders />} />
       <Route path="/admin" element={<AdminDashboard />} />
       <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/careers" element={<CareersPage />} />
     </Routes>
   );
 };

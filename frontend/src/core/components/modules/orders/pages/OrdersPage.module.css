@@ -24,14 +24,13 @@
   @apply bg-white rounded-2xl border border-[#1A1209]/8 shadow-sm overflow-hidden;
 }
 
+.orderId {
+  @apply font-body font-semibold text-[#1A1209]/60 text-sm tracking-normal;
+}
+
 .cardHeader {
   @apply flex items-center justify-between px-6 py-4 border-b border-[#1A1209]/8;
 }
-
-.orderId {
-  @apply font-display font-bold text-[#1A1209] text-base;
-}
-
 /* Status badges */
 .statusDelivered {
   @apply text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full
