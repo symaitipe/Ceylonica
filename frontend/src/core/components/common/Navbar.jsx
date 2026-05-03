@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../../modules/auth/services/auth.context";
-import { useCart } from "../../../modules/cart/services/cart.context";
+import { useAuth } from "../modules/auth/services/auth.context";
+import { useCart } from "../modules/cart/services/cart.context";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
