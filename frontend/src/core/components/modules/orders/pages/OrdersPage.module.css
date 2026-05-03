@@ -1,0 +1,91 @@
+@reference "../../../../../index.css";
+
+.page {
+  @apply max-w-4xl mx-auto px-6 py-12;
+}
+
+.pageTitle {
+  @apply font-display text-3xl font-bold text-[#1A1209] mb-8;
+}
+
+.emptyBox {
+  @apply flex flex-col items-center justify-center py-24 text-center;
+}
+
+.emptyText {
+  @apply text-[#1A1209]/50 text-base;
+}
+
+.list {
+  @apply flex flex-col gap-5;
+}
+
+.card {
+  @apply bg-white rounded-2xl border border-[#1A1209]/8 shadow-sm overflow-hidden;
+}
+
+.orderId {
+  @apply font-body font-semibold text-[#1A1209]/60 text-sm tracking-normal;
+}
+
+.cardHeader {
+  @apply flex items-center justify-between px-6 py-4 border-b border-[#1A1209]/8;
+}
+/* Status badges */
+.statusDelivered {
+  @apply text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full
+         bg-green-100 text-green-700;
+}
+
+.statusShipped {
+  @apply text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full
+         bg-blue-100 text-blue-700;
+}
+
+.statusProcessing {
+  @apply text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full
+         bg-amber-100 text-amber-700;
+}
+
+.statusCancelled {
+  @apply text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full
+         bg-red-100 text-red-600;
+}
+
+.statusPending {
+  @apply text-xs font-bold uppercase tracking-wide px-3 py-1 rounded-full
+         bg-[#1A1209]/8 text-[#1A1209]/60;
+}
+
+.itemsList {
+  @apply flex flex-col gap-0 divide-y divide-[#1A1209]/5;
+}
+
+.item {
+  @apply flex items-center justify-between px-6 py-3.5;
+}
+
+.itemName {
+  @apply text-sm text-[#1A1209]/70;
+}
+
+.itemPrice {
+  @apply text-sm font-semibold text-[#1A1209];
+}
+
+.cardFooter {
+  @apply flex items-center justify-between px-6 py-4
+         bg-[#FAF6EE] border-t border-[#1A1209]/8;
+}
+
+.orderDate {
+  @apply text-xs text-[#1A1209]/40;
+}
+
+.orderTotal {
+  @apply font-display font-bold text-[#C9A84C] text-base;
+}
+
+.errorBox {
+  @apply text-center text-red-600 py-20;
+}

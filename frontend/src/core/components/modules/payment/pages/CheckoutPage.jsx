@@ -14,9 +14,12 @@ import {
   confirmPayment,
   linkPaymentToOrder,
 } from "../../payment/services/Payment.service";
-import "./CheckoutPage.css";
+import styles from "./CheckoutPage.module.css";
 
-const stripePromise = loadStripe("");
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+console.log("Stripe key loaded:", stripeKey); // Debug log
+
+const stripePromise = loadStripe(stripeKey);
 
 const CheckoutForm = () => {
   const { cartItems, totalPrice, clearCart } = useCart();
@@ -65,7 +68,6 @@ const CheckoutForm = () => {
         totalAmount: totalPrice,
       };
 
-      // ── COD flow ──────────────────────────────────────────────────
       if (formData.paymentMethod === "cod") {
         await createOrder(orderData);
         clearCart();
@@ -73,15 +75,11 @@ const CheckoutForm = () => {
         return;
       }
 
-      // ── Card flow ─────────────────────────────────────────────────
-
-      // Step 1 — Create PaymentIntent (no orderId yet)
       const amountInCents = Math.round(totalPrice * 100);
       const paymentData = await createPayment(amountInCents);
       const clientSecret = paymentData.data.clientSecret;
       const paymentIntentId = paymentData.data.stripePaymentIntentId;
 
-      // Step 2 — Confirm card payment with Stripe
       const { error: stripeError, paymentIntent } =
         await stripe.confirmCardPayment(clientSecret, {
           payment_method: {
@@ -99,16 +97,10 @@ const CheckoutForm = () => {
         return;
       }
 
-      // Step 3 — Payment succeeded → create order
       if (paymentIntent.status === "succeeded") {
         const order = await createOrder(orderData);
-
-        // Step 4 — Link payment to order
         await linkPaymentToOrder(paymentIntentId, order.id);
-
-        // Step 5 — Confirm on backend
         await confirmPayment(paymentIntentId);
-
         clearCart();
         navigate("/orders");
       }
@@ -119,149 +111,181 @@ const CheckoutForm = () => {
     }
   };
 
+  const shippingFields = [
+    {
+      label: "Full Name",
+      id: "fullName",
+      type: "text",
+      placeholder: "John Doe",
+    },
+    {
+      label: "Email",
+      id: "email",
+      type: "email",
+      placeholder: "you@example.com",
+    },
+    {
+      label: "Phone",
+      id: "phone",
+      type: "tel",
+      placeholder: "+94 xx xxx xxxx",
+    },
+  ];
+
   return (
-    <div className="checkout-page">
-      <h2>Checkout</h2>
+    <div className={styles.page}>
+      <h2 className={styles.pageTitle}>Checkout</h2>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className={styles.errorBox}>{error}</div>}
 
-      <div className="checkout-container">
-        <form onSubmit={handleSubmit} className="checkout-form">
-          <h3>Shipping Information</h3>
+      <div className={styles.container}>
+        {/* ── Form ── */}
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <h3 className={styles.sectionTitle}>Shipping Information</h3>
 
-          <div className="form-group">
-            <label htmlFor="fullName">Full Name</label>
-            <input
-              type="text"
-              id="fullName"
-              name="fullName"
-              value={formData.fullName}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          {shippingFields.map(({ label, id, type, placeholder }) => (
+            <div key={id} className={styles.fieldGroup}>
+              <label htmlFor={id} className={styles.label}>
+                {label}
+              </label>
+              <input
+                type={type}
+                id={id}
+                name={id}
+                value={formData[id]}
+                onChange={handleChange}
+                placeholder={placeholder}
+                required
+                className={styles.input}
+              />
+            </div>
+          ))}
 
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="phone">Phone</label>
-            <input
-              type="tel"
-              id="phone"
-              name="phone"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="address">Address</label>
+          <div className={styles.fieldGroup}>
+            <label htmlFor="address" className={styles.label}>
+              Address
+            </label>
             <textarea
               id="address"
               name="address"
               value={formData.address}
               onChange={handleChange}
+              placeholder="123 Main St"
+              rows={3}
               required
+              className={styles.textarea}
             />
           </div>
 
-          <div className="form-row">
-            <div className="form-group">
-              <label htmlFor="city">City</label>
+          <div className={styles.formRow}>
+            <div className={styles.fieldGroup}>
+              <label htmlFor="city" className={styles.label}>
+                City
+              </label>
               <input
                 type="text"
                 id="city"
                 name="city"
                 value={formData.city}
                 onChange={handleChange}
+                placeholder="Colombo"
                 required
+                className={styles.input}
               />
             </div>
-            <div className="form-group">
-              <label htmlFor="postalCode">Postal Code</label>
+            <div className={styles.fieldGroup}>
+              <label htmlFor="postalCode" className={styles.label}>
+                Postal Code
+              </label>
               <input
                 type="text"
                 id="postalCode"
                 name="postalCode"
                 value={formData.postalCode}
                 onChange={handleChange}
+                placeholder="10001"
                 required
+                className={styles.input}
               />
             </div>
           </div>
 
-          <h3>Payment Method</h3>
+          <h3 className={styles.sectionTitle}>Payment Method</h3>
 
-          <div className="payment-options">
-            <label>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="card"
-                checked={formData.paymentMethod === "card"}
-                onChange={handleChange}
-              />
-              Credit/Debit Card
-            </label>
-            <label>
-              <input
-                type="radio"
-                name="paymentMethod"
-                value="cod"
-                checked={formData.paymentMethod === "cod"}
-                onChange={handleChange}
-              />
-              Cash on Delivery
-            </label>
+          <div className={styles.paymentOptions}>
+            {[
+              { value: "card", label: "💳  Credit / Debit Card" },
+              { value: "cod", label: "🚚  Cash on Delivery" },
+            ].map(({ value, label }) => (
+              <label key={value} className={styles.paymentOption}>
+                <input
+                  type="radio"
+                  name="paymentMethod"
+                  value={value}
+                  checked={formData.paymentMethod === value}
+                  onChange={handleChange}
+                  className={styles.radioInput}
+                />
+                <span className={styles.paymentOptionText}>{label}</span>
+              </label>
+            ))}
           </div>
 
           {formData.paymentMethod === "card" && (
-            <div className="card-element-container">
-              <label>Card Details</label>
-              <CardElement
-                options={{
-                  style: {
-                    base: {
-                      fontSize: "16px",
-                      color: "#424770",
-                      "::placeholder": { color: "#aab7c4" },
+            <div className={styles.cardElementWrapper}>
+              <label className={styles.label}>Card Details</label>
+              <div className={styles.cardElement}>
+                <CardElement
+                  options={{
+                    style: {
+                      base: {
+                        fontSize: "15px",
+                        color: "#1A1209",
+                        fontFamily: "'DM Sans', sans-serif",
+                        "::placeholder": { color: "#1A120940" },
+                      },
+                      invalid: { color: "#dc2626" },
                     },
-                    invalid: { color: "#9e2146" },
-                  },
-                }}
-              />
+                  }}
+                />
+              </div>
             </div>
           )}
 
-          <button type="submit" disabled={loading || !stripe}>
+          <button
+            type="submit"
+            disabled={loading || !stripe}
+            className={styles.submitBtn}
+          >
             {loading ? "Processing..." : "Place Order"}
           </button>
         </form>
 
-        <div className="order-summary">
-          <h3>Order Summary</h3>
-          {cartItems.map((item) => (
-            <div key={item.productId} className="summary-item">
-              <span>
-                {item.name} x {item.quantity}
-              </span>
-              <span>Rs. {(item.price * item.quantity).toFixed(2)}</span>
+        {/* ── Order Summary ── */}
+        <div className={styles.summary}>
+          <div className={styles.summaryInner}>
+            <h3 className={styles.summaryTitle}>Order Summary</h3>
+
+            {cartItems.map((item) => (
+              <div key={item.productId} className={styles.summaryItem}>
+                <span className={styles.summaryItemName}>
+                  {item.name}{" "}
+                  <span className="text-[#1A1209]/40">x{item.quantity}</span>
+                </span>
+                <span className={styles.summaryItemPrice}>
+                  Rs. {(item.price * item.quantity).toFixed(2)}
+                </span>
+              </div>
+            ))}
+
+            <div className={styles.summaryDivider}>
+              <div className={styles.summaryTotal}>
+                <span className={styles.summaryTotalLabel}>Total</span>
+                <span className={styles.summaryTotalValue}>
+                  Rs. {totalPrice.toFixed(2)}
+                </span>
+              </div>
             </div>
-          ))}
-          <div className="summary-total">
-            <strong>Total:</strong>
-            <strong>Rs. {totalPrice.toFixed(2)}</strong>
           </div>
         </div>
       </div>
@@ -269,12 +293,10 @@ const CheckoutForm = () => {
   );
 };
 
-const Checkout = () => {
-  return (
-    <Elements stripe={stripePromise}>
-      <CheckoutForm />
-    </Elements>
-  );
-};
+const Checkout = () => (
+  <Elements stripe={stripePromise}>
+    <CheckoutForm />
+  </Elements>
+);
 
 export default Checkout;
